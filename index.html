@@ -198,7 +198,7 @@
             <h3 class="section-heading reveal-title">Takes Creator</h3>
             <div class="video-carousel-wrapper reveal-content">
                 <div class="video-card is-paused">
-                    <video src="./midia/video1.mp4" playsinline loop preload="metadata"></video>
+                    <video src="./midia/video1.mp4" poster="./img/campo.PNG" playsinline loop preload="metadata"></video>
                     <div class="video-status-icon">
                         <svg viewBox="0 0 24 24">
                             <path d="M8 5v14l11-7z" />
@@ -211,7 +211,7 @@
                 </div>
 
                 <div class="video-card is-paused">
-                    <video src="./midia/video2.mp4" playsinline loop preload="metadata"></video>
+                    <video src="./midia/video2.mp4" poster="./img/mac.PNG" playsinline loop preload="metadata"></video>
                     <div class="video-status-icon">
                         <svg viewBox="0 0 24 24">
                             <path d="M8 5v14l11-7z" />
@@ -224,7 +224,7 @@
                 </div>
 
                 <div class="video-card is-paused">
-                    <video src="./midia/video3.mp4" playsinline loop preload="metadata"></video>
+                    <video src="./midia/video3.mp4" poster="./img/cabelo.PNG" playsinline loop preload="metadata"></video>
                     <div class="video-status-icon">
                         <svg viewBox="0 0 24 24">
                             <path d="M8 5v14l11-7z" />
@@ -237,7 +237,7 @@
                 </div>
 
                 <div class="video-card is-paused">
-                    <video src="./midia/video4.mp4" playsinline loop preload="metadata"></video>
+                    <video src="./midia/video4.mp4" poster="./img/oculos.PNG" playsinline loop preload="metadata"></video>
                     <div class="video-status-icon">
                         <svg viewBox="0 0 24 24">
                             <path d="M8 5v14l11-7z" />
@@ -280,7 +280,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js') /* <--- Mude de './sw.js' para '/sw.js' */
+                navigator.serviceWorker.register('/sw.js')
                     .then((reg) => console.log('Service Worker registrado com sucesso:', reg.scope))
                     .catch((err) => console.log('Falha ao registrar Service Worker:', err));
             });
