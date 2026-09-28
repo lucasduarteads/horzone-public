@@ -1,16 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    /* --- 1. BARRA DE PROGRESSO DE SCROLL NO TOPO --- */
+    /* --- 1. BARRA DE PROGRESSO DE SCROLL USANDO TRANSFORM SCALE --- */
     const progressBar = document.getElementById('scrollProgressBar');
     if (progressBar) {
+        let isTicking = false;
+
         const updateProgressBar = () => {
             const scrollTop = window.scrollY || document.documentElement.scrollTop;
             const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
-            progressBar.style.width = `${progress}%`;
+            const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) : 0;
+            
+            // Altera apenas o scaleX (GPU pura) sem forçar o recálculo do layout da página
+            progressBar.style.transform = `scaleX(${progress})`;
+            isTicking = false;
         };
 
-        window.addEventListener('scroll', updateProgressBar, { passive: true });
+        window.addEventListener('scroll', () => {
+            if (!isTicking) {
+                window.requestAnimationFrame(updateProgressBar);
+                isTicking = true;
+            }
+        }, { passive: true });
+
         updateProgressBar();
     }
 
@@ -42,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         card.addEventListener('click', () => {
             if (video.paused) {
-                // Pausa outros vídeos no carrossel para tocar apenas um por vez
                 videoCards.forEach(otherCard => {
                     const otherVideo = otherCard.querySelector('video');
                     if (otherVideo && otherVideo !== video) {
@@ -54,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 video.play().then(() => {
                     card.classList.remove('is-paused');
                 }).catch(() => {
-                    // Trata restrições de autoplay se necessário
                     card.classList.add('is-paused');
                 });
             } else {
@@ -64,27 +73,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    /* --- 4. ANIMAÇÕES DE ENTRADA AO ROLAR (SCROLL REVEAL) --- */
+    /* --- 4. ANIMAÇÕES DE ENTRADA AO ROLAR (SCROLL REVEAL OPTIMIZED) --- */
     const revealElements = document.querySelectorAll('.reveal-title, .reveal-content, .reveal-up, .footer');
 
     if ('IntersectionObserver' in window) {
         const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -40px 0px'
+            threshold: 0.15,
+            rootMargin: '0px 0px -20px 0px'
         };
 
         const revealObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
-                    observer.unobserve(entry.target); // Anima apenas uma vez para manter a performance
+                    observer.unobserve(entry.target);
                 }
             });
         }, observerOptions);
 
         revealElements.forEach(el => revealObserver.observe(el));
     } else {
-        // Fallback para navegadores mais antigos
         revealElements.forEach(el => el.classList.add('visible'));
     }
 });

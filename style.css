@@ -8,12 +8,11 @@
     --text-color: #332d2d;
     --title-color: #22252a;
 
-    /* Transição base suave */
-    --transition-fluid: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Transição otimizada para a GPU (curva suave sem causar lag) */
+    --transition-fluid: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 
-    /* Posição inicial dos elementos reveal */
-    --reveal-up-transform: translate3d(0, 50px, 0);
+    --reveal-up-transform: translate3d(0, 30px, 0);
 }
 
 /* --- OCULTAR BARRA DE ROLAGEM GLOBALMENTE --- */
@@ -63,13 +62,13 @@ body {
     padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* Fundo desfocado */
+/* Fundo desfocado fixo otimizado */
 body::before {
     content: "";
     position: fixed;
     top: 20%;
     left: 50%;
-    transform: translate(-50%, -20%);
+    transform: translate3d(-50%, -20%, 0);
     width: 450px;
     height: 450px;
     border-radius: 50%;
@@ -83,6 +82,7 @@ body::before {
     opacity: 0.85;
     pointer-events: none;
     z-index: -1;
+    will-change: transform;
 }
 
 /* --- BARRA DE PROGRESSO NO TOPO --- */
@@ -102,16 +102,25 @@ body::before {
     width: 0%;
     background: linear-gradient(90deg, #3b82f6 0%, #a855f7 50%, #ef4444 100%);
     box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-    transition: width 0.1s linear;
-    will-change: width;
+    transition: transform 0.1s linear;
+    transform-origin: left;
+    will-change: transform;
 }
 
-/* --- ANIMAÇÕES DE SCROLL REVEAL --- */
+/* --- ANIMAÇÕES DINÂMICAS ULTRA FLUIDAS (ACELERAÇÃO DE HARDWARE) --- */
+.reveal-title,
+.reveal-content,
+.reveal-up {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    perspective: 1000px;
+    will-change: opacity, transform;
+}
+
 .reveal-title {
     opacity: 0;
-    transform: translate3d(-50px, 40px, 0) scale(0.95);
+    transform: translate3d(-30px, 20px, 0) scale(0.98);
     transition: var(--transition-fluid);
-    will-change: opacity, transform;
 }
 
 .reveal-title.visible {
@@ -121,9 +130,8 @@ body::before {
 
 .reveal-content {
     opacity: 0;
-    transform: translate3d(60px, 0, 0) scale(0.96);
+    transform: translate3d(30px, 0, 0) scale(0.98);
     transition: var(--transition-fluid);
-    will-change: opacity, transform;
 }
 
 .reveal-content.visible {
@@ -135,7 +143,6 @@ body::before {
     opacity: 0;
     transform: var(--reveal-up-transform);
     transition: var(--transition-fluid);
-    will-change: opacity, transform;
 }
 
 .reveal-up.visible {
@@ -143,9 +150,9 @@ body::before {
     transform: translate3d(0, 0, 0) scale(1);
 }
 
-/* Otimização visual do Lazy Loading */
+/* Evita o cálculo abrupto do layout nas imagens */
 img[loading="lazy"] {
-    content-visibility: auto;
+    display: block;
 }
 
 .section-heading {
@@ -261,6 +268,12 @@ img[loading="lazy"] {
     color: var(--border-color);
     background: rgba(255, 255, 255, 0.9);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, background 0.2s ease;
+    will-change: transform;
+}
+
+.social-icon:active {
+    transform: scale(0.94);
 }
 
 .social-icon img {
@@ -360,14 +373,15 @@ img[loading="lazy"] {
     text-decoration: none;
     color: var(--title-color);
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.2s ease, background-color 0.2s ease;
     text-align: center;
+    will-change: transform;
 }
 
 .recommendation-icon {
     font-size: 20px;
     margin-bottom: 6px;
-    transition: transform 0.25s ease;
+    transition: transform 0.2s ease;
 }
 
 .recommendation-title {
@@ -376,18 +390,14 @@ img[loading="lazy"] {
     line-height: 1.2;
 }
 
-.recommendation-card:hover,
 .recommendation-card:active {
     background: var(--border-color);
     color: #ffffff;
-    border-color: var(--border-color);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
+    transform: translate3d(0, -2px, 0);
 }
 
-.recommendation-card:hover .recommendation-icon,
 .recommendation-card:active .recommendation-icon {
-    transform: scale(1.15);
+    transform: scale(1.1);
 }
 
 /* --- SEÇÃO SOBRE & CONTEÚDOS --- */
@@ -486,7 +496,8 @@ img[loading="lazy"] {
     background: rgba(255, 255, 255, 0.9);
     border: 1px solid var(--border-color);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease;
+    transition: transform 0.2s ease;
+    will-change: transform;
 }
 
 .photo-grid-item img {
@@ -498,7 +509,6 @@ img[loading="lazy"] {
 
 .photo-grid-item:active {
     transform: scale(0.96);
-    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);
 }
 
 /* --- SEÇÃO AVALIAÇÕES --- */
@@ -521,10 +531,9 @@ img[loading="lazy"] {
     padding: 8px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
     overflow: hidden;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.3s ease,
-                border-color 0.3s ease;
+    transition: transform 0.2s ease;
     cursor: pointer;
+    will-change: transform;
 }
 
 .feedback-image-card img {
@@ -535,11 +544,8 @@ img[loading="lazy"] {
     object-fit: contain;
 }
 
-.feedback-image-card:hover,
 .feedback-image-card:active {
-    transform: translateY(-3px) scale(1.01);
-    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
-    border-color: var(--border-color);
+    transform: translate3d(0, -2px, 0) scale(1.01);
 }
 
 /* --- CARROSSEL DE VÍDEOS --- */
@@ -570,9 +576,10 @@ img[loading="lazy"] {
     background: #111;
     border: 1px solid var(--border-color);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition: transform 0.2s ease;
     cursor: pointer;
     user-select: none;
+    will-change: transform;
 }
 
 .video-card:active {
@@ -627,7 +634,7 @@ img[loading="lazy"] {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.2s ease, transform 0.2s ease;
     pointer-events: none;
 }
 
@@ -681,8 +688,8 @@ img[loading="lazy"] {
 }
 
 @keyframes floatImage {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, -10px, 0); }
 }
 
 /* --- FOOTER --- */
@@ -714,7 +721,8 @@ img[loading="lazy"] {
     opacity: 0;
     transform: translate3d(0, 20px, 0);
     transition: var(--transition-fluid);
-    will-change: opacity, transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .footer.visible {
