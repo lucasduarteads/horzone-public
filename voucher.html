@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Códigos de Desconto - Leticia</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-12">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
+    <div class="max-w-4xl mx-auto px-4 py-6 text-center">
+      <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Códigos de Desconto</h1>
+      <p class="text-slate-500 text-sm sm:text-base mt-1">Aproveite cupons e links exclusivos das minhas marcas parceiras</p>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-4xl mx-auto px-4 mt-8">
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-2 translate-y-20 opacity-0 transition-all duration-300 z-50">
+      <i class="fa-solid fa-circle-check text-emerald-400"></i>
+      <span id="toast-message" class="text-sm font-medium">Código copiado com sucesso!</span>
+    </div>
+
+    <!-- Lista de Cupons -->
+    <div class="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-2">
+
+      <!-- Item 1: TEEVA -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+        <div>
+          <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full uppercase tracking-wider">Vestuário</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-2">TEEVA</h2>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-100 space-y-3">
+          <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300">
+            <span class="font-mono font-bold text-slate-700 tracking-wider text-sm sm:text-base select-all">TEEVALETICIA94</span>
+            <button onclick="copiarTexto('TEEVALETICIA94', this)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <i class="fa-regular fa-copy"></i> Copiar Cupom
+            </button>
+          </div>
+          <a href="https://teevaofficial.com?bg_ref=kiRRBJjnQm" target="_blank" rel="noopener noreferrer" class="w-full text-center block bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm py-2.5 rounded-xl transition-colors">
+            Ir para a Loja <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Item 2: URBAN FLOWERS -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+        <div>
+          <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full uppercase tracking-wider">Sapatos & Moda</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-2">URBAN FLOWERS</h2>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-100 space-y-3">
+          <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300">
+            <span class="font-mono font-bold text-slate-700 tracking-wider text-sm sm:text-base select-all">LETTSSS</span>
+            <button onclick="copiarTexto('LETTSSS', this)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <i class="fa-regular fa-copy"></i> Copiar Cupom
+            </button>
+          </div>
+          <span class="w-full text-center block bg-slate-100 text-slate-400 font-medium text-sm py-2.5 rounded-xl cursor-not-allowed">
+            Link indisponível
+          </span>
+        </div>
+      </div>
+
+      <!-- Item 3: TUYO -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+        <div>
+          <span class="text-xs font-semibold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full uppercase tracking-wider">Acessórios</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-2">TUYO</h2>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-100 space-y-3">
+          <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300">
+            <span class="font-mono font-bold text-slate-700 tracking-wider text-sm sm:text-base select-all">LETS10</span>
+            <button onclick="copiarTexto('LETS10', this)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <i class="fa-regular fa-copy"></i> Copiar Cupom
+            </button>
+          </div>
+          <a href="https://tuyo.com.br/?srsltid=AfmBOopjJylvfAAyIJz7B5jTJGTgokVNqAOL9vnsas496hMPTo1Qa7hi" target="_blank" rel="noopener noreferrer" class="w-full text-center block bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm py-2.5 rounded-xl transition-colors">
+            Ir para a Loja <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Item 4: MEU SAPATO PRETO -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+        <div>
+          <span class="text-xs font-semibold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full uppercase tracking-wider">Calçados</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-2">MEU SAPATO PRETO</h2>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-100 space-y-3">
+          <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300">
+            <span class="font-mono font-bold text-slate-700 tracking-wider text-sm sm:text-base select-all">LELE</span>
+            <button onclick="copiarTexto('LELE', this)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <i class="fa-regular fa-copy"></i> Copiar Cupom
+            </button>
+          </div>
+          <a href="https://www.meusapatopreto.com.br" target="_blank" rel="noopener noreferrer" class="w-full text-center block bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm py-2.5 rounded-xl transition-colors">
+            Ir para a Loja <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Item 5: USE HITZZ -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+        <div>
+          <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full uppercase tracking-wider">Moda</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-2">USE HITZZ</h2>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-100 space-y-3">
+          <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300">
+            <span class="font-mono font-bold text-slate-700 tracking-wider text-sm sm:text-base select-all">LELE</span>
+            <button onclick="copiarTexto('LELE', this)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <i class="fa-regular fa-copy"></i> Copiar Cupom
+            </button>
+          </div>
+          <a href="https://www.usehitzz.com.br/?srsltid=AfmBOopAsgXMKt84pntro64A_poDIO4kDzYIlzv93RDl6XRHRmzEaY13" target="_blank" rel="noopener noreferrer" class="w-full text-center block bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm py-2.5 rounded-xl transition-colors">
+            Ir para a Loja <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Item 6: TODA UP -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+        <div>
+          <span class="text-xs font-semibold text-sky-600 bg-sky-50 px-2.5 py-1 rounded-full uppercase tracking-wider">Moda Fitness</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-2">TODA UP</h2>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-100 space-y-3">
+          <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300">
+            <span class="font-mono font-bold text-slate-700 tracking-wider text-sm sm:text-base select-all">LET</span>
+            <button onclick="copiarTexto('LET', this)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <i class="fa-regular fa-copy"></i> Copiar Cupom
+            </button>
+          </div>
+          <a href="https://todaup.com/collections/squad-toda-up?utm_campaign=fluxoinfluenciadoras&utm_content=mensagem1&utm_medium=influs&utm_source=influs&utm_term=comissao" target="_blank" rel="noopener noreferrer" class="w-full text-center block bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm py-2.5 rounded-xl transition-colors">
+            Ir para a Loja <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Item 7: LINUS -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+        <div>
+          <span class="text-xs font-semibold text-teal-600 bg-teal-50 px-2.5 py-1 rounded-full uppercase tracking-wider">Sandálias Ecológicas</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-2">LINUS</h2>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-100 space-y-3">
+          <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300">
+            <span class="font-mono font-bold text-slate-700 tracking-wider text-sm sm:text-base select-all">LELE10</span>
+            <button onclick="copiarTexto('LELE10', this)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <i class="fa-regular fa-copy"></i> Copiar Cupom
+            </button>
+          </div>
+          <a href="https://uselinus.com.br/collections/sandalia-linus-colecao-completa?srsltid=AfmBOoqQBL0yuP8_254Q8lwxDAnzt9Gry-buVuJrxttwVjreKDcFhloj" target="_blank" rel="noopener noreferrer" class="w-full text-center block bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm py-2.5 rounded-xl transition-colors">
+            Ir para a Loja <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Item 8: BIFFLES -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+        <div>
+          <span class="text-xs font-semibold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-full uppercase tracking-wider">Alimentação</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-2">BIFFLES</h2>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-100 space-y-3">
+          <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300">
+            <span class="font-mono font-bold text-slate-700 tracking-wider text-sm sm:text-base select-all">LET05</span>
+            <button onclick="copiarTexto('LET05', this)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <i class="fa-regular fa-copy"></i> Copiar Cupom
+            </button>
+          </div>
+          <a href="https://biffles.saipos.com/home" target="_blank" rel="noopener noreferrer" class="w-full text-center block bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm py-2.5 rounded-xl transition-colors">
+            Ir para a Loja <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Item 9: ÓTICAS PREVENT -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between sm:col-span-2 lg:col-span-1">
+        <div>
+          <span class="text-xs font-semibold text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-full uppercase tracking-wider">Óculos & Lentes</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-2">ÓTICAS PREVENT</h2>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-100 space-y-3">
+          <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-dashed border-slate-300">
+            <span class="font-mono font-bold text-slate-700 tracking-wider text-sm sm:text-base select-all">INFLUENCER15</span>
+            <button onclick="copiarTexto('INFLUENCER15', this)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <i class="fa-regular fa-copy"></i> Copiar Cupom
+            </button>
+          </div>
+          <a href="https://lp.oticasprevent.com.br/influencer/?utm_source=Influencer&utm_medium=stories&utm_campaign=letss+jpg" target="_blank" rel="noopener noreferrer" class="w-full text-center block bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm py-2.5 rounded-xl transition-colors">
+            Ir para a Loja <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    function copiarTexto(texto, elementoBotao) {
+      navigator.clipboard.writeText(texto).then(() => {
+        // Exibe toast de confirmação
+        mostrarToast(`Cupom "${texto}" copiado!`);
+
+        // Feedback temporário no botão
+        const textoOriginal = elementoBotao.innerHTML;
+        elementoBotao.innerHTML = '<i class="fa-solid fa-check"></i> Copiado!';
+        elementoBotao.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+        elementoBotao.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+
+        setTimeout(() => {
+          elementoBotao.innerHTML = textoOriginal;
+          elementoBotao.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+          elementoBotao.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+        }, 2000);
+      }).catch(err => {
+        mostrarToast('Erro ao copiar. Tente selecionar o texto manualmente.');
+      });
+    }
+
+    function mostrarToast(mensagem) {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toast-message');
+      
+      toastMessage.textContent = mensagem;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="blueGrad" x1="30%" y1="10%" x2="70%" y2="90%">
+      <stop offset="0%" stop-color="#00d2ff" />
+      <stop offset="45%" stop-color="#0066ff" />
+      <stop offset="100%" stop-color="#0033cc" />
+    </linearGradient>
+  </defs>
+  
+  <circle cx="400" cy="300" r="150" fill="url(#blueGrad)" />
+  
+  <path d="M 200 460 A 200 200 0 0 0 600 460 Z" fill="url(#blueGrad)" />
+</svg>
+

@@ -1,0 +1,12 @@
+# Arquivos de sistema (Windows e macOS)
+desktop.ini
+Thumbs.db
+.DS_Store
+
+# Configurações do ambiente de desenvolvimento (VS Code / IDEs)
+.vscode/
+.idea/
+
+# Arquivos de log e temporários
+*.log
+*.tmp
