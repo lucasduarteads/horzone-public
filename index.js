@@ -25,15 +25,17 @@ document.addEventListener('DOMContentLoaded', () => {
         updateProgressBar();
     }
 
-    /* --- 2. CONTROLE DE ÁUDIO DO VÍDEO PRINCIPAL --- */
+    /* --- 2. CONTROLE DE ÁUDIO DO VÍDEO PRINCIPAL E NO SCROLL --- */
     const topVideo = document.getElementById('topVideo');
     const toggleAudioBtn = document.getElementById('toggleAudioBtn');
     const audioIcon = document.getElementById('audioIcon');
     const audioText = document.getElementById('audioText');
 
     if (topVideo && toggleAudioBtn) {
-        toggleAudioBtn.addEventListener('click', () => {
-            topVideo.muted = !topVideo.muted;
+        let userManuallyMuted = false;
+
+        // Função auxiliar para atualizar o ícone e o texto do botão
+        const updateAudioButtonUI = () => {
             if (topVideo.muted) {
                 if (audioIcon) audioIcon.textContent = '🔇';
                 if (audioText) audioText.textContent = 'Ativar Som';
@@ -41,7 +43,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (audioIcon) audioIcon.textContent = '🔊';
                 if (audioText) audioText.textContent = 'Desativar Som';
             }
+        };
+
+        // Clique manual no botão de áudio
+        toggleAudioBtn.addEventListener('click', () => {
+            topVideo.muted = !topVideo.muted;
+            userManuallyMuted = topVideo.muted;
+            updateAudioButtonUI();
         });
+
+        // Mutar ao rolar para baixo e desmutar ao voltar ao topo
+        window.addEventListener('scroll', () => {
+            const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+
+            // Se rolou para baixo (mais de 150px), muta o vídeo
+            if (scrollPosition > 150) {
+                if (!topVideo.muted) {
+                    topVideo.muted = true;
+                    updateAudioButtonUI();
+                }
+            } 
+            // Se voltou ao topo (até 50px) e o usuário não mutou manualmente
+            else if (scrollPosition <= 50) {
+                if (topVideo.muted && !userManuallyMuted) {
+                    topVideo.muted = false;
+                    topVideo.play().catch(() => {
+                        // Fallback em caso de bloqueio do navegador
+                        topVideo.muted = true;
+                    });
+                    updateAudioButtonUI();
+                }
+            }
+        }, { passive: true });
     }
 
     /* --- 3. CONTROLE DE PLAY / PAUSE NOS VÍDEOS DO CARROSSEL --- */
