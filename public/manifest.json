@@ -1,0 +1,16 @@
+{
+  "name": "Leticia JPG - UGC Creator",
+  "short_name": "Leticia JPG",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "./img/perfillets.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

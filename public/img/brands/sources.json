@@ -1,0 +1,65 @@
+{
+  "note": "Logo asset sources. Brand websites and media URLs are recorded for provenance.",
+  "assets": [
+    {
+      "filename": "cerave.png",
+      "officialPage": "https://commons.wikimedia.org/wiki/File:CeraVe_logo.png",
+      "assetSource": "https://upload.wikimedia.org/wikipedia/commons/4/42/CeraVe_logo.png",
+      "contentType": "image/png"
+    },
+    {
+      "filename": "coca-cola.svg",
+      "officialPage": "https://www.coca-cola.com/",
+      "assetSource": "https://www.coca-cola.com/content/dam/onexp/global/icons/Coke-company-logo-black.svg",
+      "contentType": "image/svg+xml"
+    },
+    {
+      "filename": "pantene.png",
+      "officialPage": "https://pantene.com/",
+      "assetSource": "https://pantene.com/cdn/shop/files/pantene_logo_1_1080x1080.png?v=1789408478",
+      "contentType": "image/png"
+    },
+    {
+      "filename": "mac-cosmetics.webp",
+      "officialPage": "https://www.maccosmetics.com/",
+      "assetSource": "https://www.maccosmetics.com/cdn/shop/files/MAC_logo_1_8458b9aa-0ac8-4631-b3e1-9d96cad96df5.png?v=1786964565",
+      "contentType": "image/webp"
+    },
+    {
+      "filename": "use-hittz.png",
+      "officialPage": "https://www.usehitzz.com.br/",
+      "assetSource": "https://adaptive-images.uooucdn.com.br/tr:w-iw,q-80/static/images/loja_virtual/use-hitzz/usehitz-logo-rodape.png",
+      "contentType": "image/png"
+    },
+    {
+      "filename": "meu-sapato-preto.svg",
+      "officialPage": "https://www.meusapatopreto.com.br/",
+      "assetSource": "https://cdn.dooca.store/785/files/meu-sapato-preto-logo.svg?v=1718909306",
+      "contentType": "image/svg+xml"
+    },
+    {
+      "filename": "starbucks.svg",
+      "officialPage": "https://www.starbucks.com.br/",
+      "assetSource": "https://cdn-cms-sbux.zamp.com.br/brand_selo_starbucks_3fbe4170_16e819f5db/brand_selo_starbucks_3fbe4170_16e819f5db.svg?v=1779219819833",
+      "contentType": "image/svg+xml"
+    },
+    {
+      "filename": "cif.png",
+      "officialPage": "https://www.cifclean.co.uk/",
+      "assetSource": "https://www.cifclean.co.uk/static/21b61ba7d3183b29acf105e53f4260c0/cf834/Cif_logo.png",
+      "contentType": "image/png"
+    },
+    {
+      "filename": "tuyo.svg",
+      "officialPage": "https://tuyo.com.br/",
+      "assetSource": "https://tuyo.com.br/cdn/shop/files/logo_tuyo_preto.svg?v=1779473198&width=500",
+      "contentType": "image/svg+xml"
+    },
+    {
+      "filename": "oticas-prevent.webp",
+      "officialPage": "https://lp.oticasprevent.com.br/influencer/",
+      "assetSource": "https://pages.greatpages.com.br/lp.oticasprevent.com.br-influencer/1790800651/imagens/6.png",
+      "contentType": "image/webp"
+    }
+  ]
+}

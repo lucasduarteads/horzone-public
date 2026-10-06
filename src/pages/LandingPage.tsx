@@ -1,0 +1,531 @@
+import { useState, type FormEvent, type MouseEvent } from "react";
+import { getPlatformHostname } from "../config/platform";
+
+const platformHostname = getPlatformHostname();
+
+const services = [
+  {
+    number: "01",
+    title: "Seu espaço digital",
+    description:
+      "Uma página profissional com sua identidade, biografia, redes sociais e os links mais importantes em um só lugar.",
+    icon: "↗",
+  },
+  {
+    number: "02",
+    title: "Portfólio que apresenta",
+    description:
+      "Mostre vídeos, trabalhos e campanhas em uma vitrine pensada para marcas conhecerem o seu potencial.",
+    icon: "◫",
+  },
+  {
+    number: "03",
+    title: "Compartilhe com facilidade",
+    description:
+      "Use um endereço simples para divulgar seu trabalho na bio das redes, em propostas e nas conversas com clientes.",
+    icon: "⌁",
+  },
+];
+
+const plans = [
+  {
+    name: "Essencial",
+    price: "39",
+    cents: "90",
+    description: "Para começar a apresentar seu trabalho com profissionalismo.",
+    features: [
+      "Página personalizada",
+      "Redes sociais e links",
+      "Até 6 itens no portfólio",
+      `Endereço ${platformHostname}/seunome`,
+    ],
+  },
+  {
+    name: "Creator",
+    price: "69",
+    cents: "90",
+    description: "Mais espaço para mostrar seu conteúdo e fechar parcerias.",
+    features: [
+      "Tudo do Essencial",
+      "Até 20 itens no portfólio",
+      "Vídeo de apresentação",
+      "Personalização visual ampliada",
+    ],
+    featured: true,
+  },
+  {
+    name: "Pro",
+    price: "119",
+    cents: "90",
+    description: "Uma presença digital completa para sua marca pessoal.",
+    features: [
+      "Tudo do Creator",
+      "Domínio próprio (configuração)",
+      "Portfólio ampliado",
+      "Suporte prioritário",
+    ],
+  },
+];
+
+type ContactField = "name" | "email" | "whatsapp" | "social" | "plan" | "message";
+type ContactErrors = Partial<Record<ContactField, string>>;
+
+const contactFields: ContactField[] = [
+  "name",
+  "email",
+  "whatsapp",
+  "social",
+  "plan",
+  "message",
+];
+
+async function validateContactField(
+  field: ContactField,
+  value: string,
+): Promise<string> {
+  const trimmedValue = value.trim();
+
+  switch (field) {
+    case "name":
+      if (trimmedValue.length < 2) return "Informe seu nome completo.";
+      if (trimmedValue.length > 100) return "Use no máximo 100 caracteres.";
+      return "";
+    case "email":
+      if (!trimmedValue) return "Informe seu e-mail.";
+      if (trimmedValue.length > 254) return "Use no máximo 254 caracteres.";
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedValue)) {
+        return "Informe um e-mail válido.";
+      }
+      return "";
+    case "whatsapp": {
+      if (!trimmedValue) return "Informe seu WhatsApp com DDD.";
+      if (trimmedValue.length > 30) return "Use no máximo 30 caracteres.";
+
+      let parsePhoneNumberFromString: typeof import("libphonenumber-js/max")["parsePhoneNumberFromString"];
+      try {
+        ({ parsePhoneNumberFromString } = await import("libphonenumber-js/max"));
+      } catch {
+        return "Não foi possível carregar a validação telefônica. Tente novamente.";
+      }
+
+      try {
+        const phoneNumber = parsePhoneNumberFromString(trimmedValue, {
+          defaultCountry: "BR",
+          extract: false,
+        });
+        if (!phoneNumber?.isValid() || phoneNumber.ext) {
+          return "Informe um número com formato válido e DDD. No Brasil, use (11) 91234-5678.";
+        }
+      } catch {
+        return "Informe um número válido para WhatsApp, com DDD.";
+      }
+
+      return "";
+    }
+    case "social":
+      if (!trimmedValue) return "";
+      if (trimmedValue.length > 200) return "Use no máximo 200 caracteres.";
+      let isHttpUrl = false;
+      try {
+        const url = new URL(trimmedValue);
+        isHttpUrl =
+          ["http:", "https:"].includes(url.protocol) &&
+          url.hostname.includes(".");
+      } catch {
+        isHttpUrl = false;
+      }
+      if (!/^@[a-z0-9._]{1,30}$/i.test(trimmedValue) && !isHttpUrl) {
+        return "Informe @usuário ou um endereço iniciado por https://.";
+      }
+      return "";
+    case "plan":
+      if (
+        trimmedValue &&
+        !plans.some((plan) => plan.name === trimmedValue)
+      ) {
+        return "Selecione um plano válido.";
+      }
+      return "";
+    case "message":
+      if (trimmedValue.length < 5) {
+        return "Conte um pouco mais (mínimo de 5 caracteres).";
+      }
+      if (trimmedValue.length > 2000) {
+        return "Use no máximo 2000 caracteres.";
+      }
+      return "";
+  }
+}
+
+export default function LandingPage() {
+  const [selectedPlan, setSelectedPlan] = useState("");
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formErrors, setFormErrors] = useState<ContactErrors>({});
+
+  const scrollToSection = (
+    event: MouseEvent<HTMLAnchorElement>,
+    sectionId: string,
+  ) => {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+
+    event.preventDefault();
+    window.history.pushState(null, "", `#${sectionId}`);
+    const header = document.querySelector("header");
+    const targetTop =
+      section.getBoundingClientRect().top +
+      window.scrollY -
+      (header?.getBoundingClientRect().height ?? 0);
+    window.scrollTo({
+      top: targetTop,
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    });
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const nextErrors: ContactErrors = {};
+    for (const field of contactFields) {
+      const value =
+        field === "plan"
+          ? selectedPlan
+          : String(formData.get(field) ?? "");
+      const error = await validateContactField(field, value);
+      if (error) nextErrors[field] = error;
+    }
+
+    setFormErrors(nextErrors);
+    setFormSubmitted(false);
+    const firstInvalidField = contactFields.find((field) => nextErrors[field]);
+    if (firstInvalidField) {
+      const invalidElement = form.elements.namedItem(firstInvalidField);
+      if (invalidElement instanceof HTMLElement) invalidElement.focus();
+      return;
+    }
+
+    setFormSubmitted(true);
+  };
+
+  const validateFieldOnBlur = async (
+    field: ContactField,
+    value: string,
+  ) => {
+    if (value.length === 0) {
+      setFormErrors((current) => {
+        if (!current[field]) return current;
+        const next = { ...current };
+        delete next[field];
+        return next;
+      });
+      return;
+    }
+
+    const error = await validateContactField(field, value);
+    setFormErrors((current) => {
+      const next = { ...current };
+      if (error) next[field] = error;
+      else delete next[field];
+      return next;
+    });
+  };
+
+  const clearFieldError = (field: ContactField) => {
+    setFormSubmitted(false);
+    setFormErrors((current) => {
+      if (!current[field]) return current;
+      const next = { ...current };
+      delete next[field];
+      return next;
+    });
+  };
+
+  return (
+    <main className="min-h-screen overflow-hidden bg-[#faf9f6] text-slate-950">
+      <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-[#faf9f6]/90 backdrop-blur-xl">
+        <nav
+          aria-label="Navegação principal"
+          className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8"
+        >
+          <a href="/" aria-label="BioWeb, página inicial" className="flex items-center gap-2">
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-indigo-600 text-lg font-bold text-white">
+              b.
+            </span>
+            <span className="text-xl font-bold tracking-tight">bioweb</span>
+          </a>
+          <div className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
+            <a className="transition hover:text-indigo-700" href="#servicos" onClick={(event) => scrollToSection(event, "servicos")}>Serviços</a>
+            <a className="transition hover:text-indigo-700" href="#planos" onClick={(event) => scrollToSection(event, "planos")}>Planos</a>
+            <a className="transition hover:text-indigo-700" href="#como-funciona" onClick={(event) => scrollToSection(event, "como-funciona")}>Como funciona</a>
+          </div>
+          <a
+            href="#contato"
+            onClick={(event) => scrollToSection(event, "contato")}
+            className="rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/15 transition hover:-translate-y-0.5 hover:bg-indigo-700"
+          >
+            Fale com a gente
+          </a>
+        </nav>
+      </header>
+
+      <section className="landing-hero relative isolate">
+        <div
+          aria-hidden="true"
+          className="absolute -right-32 -top-28 -z-10 h-[32rem] w-[32rem] rounded-full bg-indigo-200/60 blur-3xl"
+        />
+        <div className="landing-hero-content mx-auto grid max-w-7xl items-center gap-10 px-5 py-14 sm:gap-14 sm:px-8 sm:py-20 lg:grid-cols-[1.05fr_.95fr] lg:py-24 xl:py-28">
+          <div className="min-w-0">
+            <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-indigo-700">
+              <span className="h-2 w-2 rounded-full bg-emerald-500" />
+              Seu talento merece uma vitrine
+            </p>
+            <h1 className="landing-hero-title max-w-3xl text-5xl font-bold leading-[0.98] tracking-tight text-slate-950 sm:text-6xl lg:text-7xl">
+              Sua carreira criativa,{" "}
+              <span className="text-indigo-600">em um só link.</span>
+            </h1>
+            <p className="landing-hero-copy mt-7 max-w-xl text-base leading-7 text-slate-600 sm:text-lg">
+              A BioWeb reúne seu portfólio UGC, redes sociais e trabalhos em
+              uma página profissional, fácil de compartilhar com marcas e
+              clientes.
+            </p>
+            <div className="landing-hero-actions mt-9 flex flex-col gap-3 sm:flex-row">
+              <a
+                href="#planos"
+                onClick={(event) => scrollToSection(event, "planos")}
+                className="rounded-full bg-indigo-600 px-7 py-3.5 text-center text-sm font-semibold text-white shadow-xl shadow-indigo-600/20 transition hover:-translate-y-0.5 hover:bg-indigo-700"
+              >
+                Conheça os planos
+              </a>
+              <a
+                href="#servicos"
+                onClick={(event) => scrollToSection(event, "servicos")}
+                className="rounded-full border border-slate-300 bg-white/70 px-7 py-3.5 text-center text-sm font-semibold text-slate-800 transition hover:border-indigo-300 hover:bg-white"
+              >
+                Descubra a BioWeb
+              </a>
+              <a
+                href="/portfolio-demo"
+                className="rounded-full border border-indigo-200 bg-indigo-50 px-7 py-3.5 text-center text-sm font-semibold text-indigo-700 transition hover:border-indigo-300 hover:bg-indigo-100"
+              >
+                Ver demonstração
+              </a>
+            </div>
+            <div className="landing-hero-proof mt-10 flex flex-wrap gap-x-7 gap-y-3 text-sm text-slate-600">
+              <span><strong className="text-slate-950">✓</strong> Feito para criadores</span>
+              <span><strong className="text-slate-950">✓</strong> Fácil de compartilhar</span>
+              <span><strong className="text-slate-950">✓</strong> Seu trabalho em destaque</span>
+            </div>
+          </div>
+
+          <div className="landing-profile-preview relative mx-auto w-full max-w-md">
+            <div
+              aria-hidden="true"
+              className="absolute -inset-4 rotate-3 rounded-[2.5rem] bg-gradient-to-br from-indigo-300 via-violet-200 to-rose-200 opacity-70 blur-sm"
+            />
+            <div className="landing-profile-card relative rounded-[2rem] border border-white/80 bg-white p-5 shadow-2xl shadow-indigo-950/15 sm:p-7">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-bold text-slate-900">Seu perfil BioWeb</span>
+                <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Online</span>
+              </div>
+              <div className="landing-profile-summary mt-6 rounded-2xl bg-gradient-to-br from-indigo-100 via-violet-50 to-rose-100 p-6 text-center">
+                <div className="landing-profile-avatar mx-auto grid h-20 w-20 place-items-center rounded-full border-4 border-white bg-indigo-200 text-3xl shadow-md">✳</div>
+                <p className="mt-4 text-lg font-bold text-slate-900">Seu nome criativo</p>
+                <p className="mt-1 text-sm text-slate-600">Criadora UGC · Moda · Beleza</p>
+                <div className="mt-5 flex justify-center gap-2">
+                  <span className="grid h-9 w-9 place-items-center rounded-full bg-white text-sm">◎</span>
+                  <span className="grid h-9 w-9 place-items-center rounded-full bg-white text-sm">♪</span>
+                  <span className="grid h-9 w-9 place-items-center rounded-full bg-white text-sm">↗</span>
+                </div>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <div className="aspect-[4/3] rounded-xl bg-gradient-to-br from-amber-100 to-rose-200 p-3">
+                  <span className="flex h-full items-end rounded-lg bg-white/25 p-2 text-xs font-semibold text-slate-800">Seu conteúdo</span>
+                </div>
+                <div className="aspect-[4/3] rounded-xl bg-gradient-to-br from-sky-100 to-indigo-200 p-3">
+                  <span className="flex h-full items-end rounded-lg bg-white/25 p-2 text-xs font-semibold text-slate-800">Seus trabalhos</span>
+                </div>
+              </div>
+              <div className="mt-4 rounded-xl bg-slate-950 px-4 py-3 text-center text-sm font-semibold text-white">
+                Vamos criar algo incrível ↗
+              </div>
+            </div>
+            <div className="absolute -bottom-5 -left-5 hidden rounded-2xl border border-white bg-white px-4 py-3 shadow-xl sm:block">
+              <p className="text-xs text-slate-500">Sua presença digital</p>
+              <p className="mt-0.5 text-sm font-bold text-slate-900">com a sua identidade</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="servicos" className="landing-fullscreen-section scroll-mt-0 bg-white py-12 sm:py-16 lg:py-8">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          <div className="max-w-2xl">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600">Tudo conectado</p>
+            <h2 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Uma vitrine, muitas possibilidades.</h2>
+            <p className="mt-4 text-base leading-7 text-slate-600">
+              Apresente sua marca pessoal de um jeito organizado, bonito e pronto para compartilhar.
+            </p>
+          </div>
+          <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {services.map((service) => (
+              <article key={service.number} className={`rounded-3xl border border-slate-200 bg-[#faf9f6] p-7 transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-950/5 ${service.number === "03" ? "md:col-span-2 md:mx-auto md:w-1/2 lg:col-span-1 lg:w-auto" : ""}`}>
+                <div className="flex items-center justify-between">
+                  <span className="grid h-12 w-12 place-items-center rounded-2xl bg-indigo-100 text-2xl text-indigo-700">{service.icon}</span>
+                  <span className="text-xs font-bold tracking-widest text-slate-400">{service.number}</span>
+                </div>
+                <h3 className="mt-7 text-xl font-bold">{service.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-600">{service.description}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="como-funciona" className="landing-fullscreen-section scroll-mt-0 py-12 sm:py-16 lg:py-8">
+        <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:items-center">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600">Simples para começar</p>
+            <h2 className="mt-3 max-w-xl text-4xl font-bold tracking-tight sm:text-5xl">Seu próximo passo profissional começa aqui.</h2>
+            <p className="mt-5 max-w-xl leading-7 text-slate-600">
+              Você escolhe um plano e compartilha suas informações. A BioWeb organiza sua presença digital para que seu trabalho seja visto e lembrado.
+            </p>
+            <a href="#contato" onClick={(event) => scrollToSection(event, "contato")} className="mt-7 inline-flex items-center gap-2 font-semibold text-indigo-700 hover:text-indigo-900">
+              Quero conversar sobre meu perfil <span aria-hidden="true">→</span>
+            </a>
+          </div>
+          <ol className="space-y-4">
+            {[
+              ["01", "Escolha o plano ideal", "Encontre o formato que combina com o momento da sua carreira."],
+              ["02", "Conte sua história", "Compartilhe seus links, sua bio e os trabalhos que quer destacar."],
+              ["03", "Divulgue seu perfil", "Envie seu link para marcas, clientes e para a bio das suas redes."],
+            ].map(([number, title, description]) => (
+              <li key={number} className="flex gap-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-indigo-600 text-sm font-bold text-white">{number}</span>
+                <div>
+                  <h3 className="font-bold">{title}</h3>
+                  <p className="mt-1 text-sm leading-6 text-slate-600">{description}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section id="planos" className="landing-fullscreen-section landing-plan-section scroll-mt-0 bg-slate-950 py-12 text-white sm:py-16 lg:py-8">
+        <div className="landing-plan-content mx-auto max-w-7xl px-5 sm:px-8">
+          <div className="landing-plan-intro mx-auto max-w-2xl text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-300">Planos mensais</p>
+            <h2 className="landing-plan-title mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Escolha como quer aparecer.</h2>
+            <p className="landing-plan-subtitle mt-4 leading-7 text-slate-300">Comece com o essencial e evolua junto com a sua carreira.</p>
+          </div>
+          <p className="landing-plan-disclaimer mx-auto mt-7 max-w-2xl rounded-xl border border-amber-200/20 bg-amber-100/10 px-4 py-3 text-center text-xs leading-5 text-amber-100">
+            Valores e recursos abaixo são apenas exemplos provisórios para apresentação. Ainda não representam uma oferta comercial.
+          </p>
+          <div className="landing-plan-grid mt-10 grid gap-5 md:grid-cols-3">
+            {plans.map((plan) => (
+              <article key={plan.name} className={`landing-plan-card relative flex min-w-0 flex-col rounded-3xl border p-6 sm:p-8 ${plan.featured ? "border-indigo-400 bg-indigo-950 shadow-2xl shadow-indigo-950/50 lg:-my-3" : "border-white/10 bg-white/[0.04]"}`}>
+                {plan.featured && <span className="landing-plan-badge absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-indigo-400 px-4 py-1 text-xs font-bold text-slate-950">MAIS ESCOLHIDO</span>}
+                <h3 className="landing-plan-name text-xl font-bold">{plan.name}</h3>
+                <p className="landing-plan-description mt-2 min-h-12 text-sm leading-6 text-slate-300">{plan.description}</p>
+                <p className="landing-plan-price mt-6">
+                  <span className="text-sm text-slate-300">R$</span>{" "}
+                  <span className="text-5xl font-bold tracking-tight">{plan.price}</span>
+                  <span className="text-lg font-semibold">,{plan.cents}</span>
+                  <span className="ml-1 text-sm text-slate-300">/ mês*</span>
+                </p>
+                <ul className="landing-plan-features mt-7 flex-1 space-y-3 border-t border-white/10 pt-6 text-sm text-slate-200">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex gap-2">
+                      <span className="font-bold text-emerald-300">✓</span>{feature}
+                    </li>
+                  ))}
+                </ul>
+                <a
+                  href="#contato"
+                  onClick={(event) => {
+                    setSelectedPlan(plan.name);
+                    scrollToSection(event, "contato");
+                  }}
+                  className={`landing-plan-cta mt-8 block rounded-full px-5 py-3 text-center text-sm font-bold transition hover:-translate-y-0.5 ${plan.featured ? "bg-white text-indigo-950 hover:bg-indigo-100" : "border border-white/20 text-white hover:bg-white/10"}`}
+                >
+                  Tenho interesse
+                </a>
+              </article>
+            ))}
+          </div>
+          <p className="landing-plan-footnote mt-5 text-center text-xs text-slate-400">* Preços ilustrativos, sujeitos a alteração. Contratação e cobrança ainda não estão habilitadas.</p>
+        </div>
+      </section>
+
+      <section id="contato" className="scroll-mt-24 py-20 sm:py-24">
+        <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-[.85fr_1.15fr]">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600">Vamos conversar</p>
+            <h2 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Sua próxima oportunidade pode começar com um link.</h2>
+            <p className="mt-5 leading-7 text-slate-600">
+              Deixe seus dados e conte o que você precisa. Estamos preparando o canal de atendimento da BioWeb.
+            </p>
+            <div className="mt-8 rounded-2xl border border-indigo-100 bg-indigo-50 p-5 text-sm leading-6 text-indigo-950">
+              <strong>Importante:</strong> este formulário é uma demonstração e não envia seus dados. O envio será conectado quando o canal de atendimento estiver configurado.
+            </div>
+          </div>
+
+          <form noValidate onSubmit={handleSubmit} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5 sm:p-8">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <label className="text-sm font-semibold text-slate-700">
+                Seu nome
+                <input id="contact-name" required name="name" autoComplete="name" minLength={2} maxLength={100} aria-invalid={Boolean(formErrors.name)} aria-describedby={formErrors.name ? "contact-name-error" : undefined} onBlur={(event) => validateFieldOnBlur("name", event.currentTarget.value)} onChange={() => clearFieldError("name")} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 font-normal outline-none transition focus:ring-4 ${formErrors.name ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="Como podemos te chamar?" />
+                {formErrors.name && <span id="contact-name-error" className="mt-1 block text-xs font-medium text-red-600">{formErrors.name}</span>}
+              </label>
+              <label className="text-sm font-semibold text-slate-700">
+                E-mail
+                <input id="contact-email" required name="email" type="email" autoComplete="email" maxLength={254} aria-invalid={Boolean(formErrors.email)} aria-describedby={formErrors.email ? "contact-email-error" : undefined} onBlur={(event) => validateFieldOnBlur("email", event.currentTarget.value)} onChange={() => clearFieldError("email")} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 font-normal outline-none transition focus:ring-4 ${formErrors.email ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="voce@email.com" />
+                {formErrors.email && <span id="contact-email-error" className="mt-1 block text-xs font-medium text-red-600">{formErrors.email}</span>}
+              </label>
+              <label className="text-sm font-semibold text-slate-700">
+                WhatsApp
+                <input id="contact-whatsapp" required name="whatsapp" type="tel" autoComplete="tel" inputMode="tel" maxLength={30} aria-invalid={Boolean(formErrors.whatsapp)} aria-describedby={formErrors.whatsapp ? "contact-whatsapp-error" : undefined} onBlur={(event) => validateFieldOnBlur("whatsapp", event.currentTarget.value)} onChange={() => clearFieldError("whatsapp")} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 font-normal outline-none transition focus:ring-4 ${formErrors.whatsapp ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="(11) 99999-9999" />
+                {formErrors.whatsapp && <span id="contact-whatsapp-error" className="mt-1 block text-xs font-medium text-red-600">{formErrors.whatsapp}</span>}
+              </label>
+            </div>
+            <label className="mt-5 block text-sm font-semibold text-slate-700">
+              Instagram ou portfólio (opcional)
+              <input id="contact-social" name="social" maxLength={200} aria-invalid={Boolean(formErrors.social)} aria-describedby={formErrors.social ? "contact-social-error" : undefined} onBlur={(event) => validateFieldOnBlur("social", event.currentTarget.value)} onChange={() => clearFieldError("social")} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 font-normal outline-none transition focus:ring-4 ${formErrors.social ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="@seuperfil ou link https://" />
+              {formErrors.social && <span id="contact-social-error" className="mt-1 block text-xs font-medium text-red-600">{formErrors.social}</span>}
+            </label>
+            <label className="mt-5 block text-sm font-semibold text-slate-700">
+              Plano de interesse
+              <select id="contact-plan" name="plan" value={selectedPlan} aria-invalid={Boolean(formErrors.plan)} aria-describedby={formErrors.plan ? "contact-plan-error" : undefined} onBlur={(event) => validateFieldOnBlur("plan", event.currentTarget.value)} onChange={(event) => { setSelectedPlan(event.target.value); clearFieldError("plan"); }} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 font-normal outline-none transition focus:ring-4 ${formErrors.plan ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`}>
+                <option value="">Ainda quero conhecer</option>
+                {plans.map((plan) => <option key={plan.name} value={plan.name}>{plan.name}</option>)}
+              </select>
+              {formErrors.plan && <span id="contact-plan-error" className="mt-1 block text-xs font-medium text-red-600">{formErrors.plan}</span>}
+            </label>
+            <label className="mt-5 block text-sm font-semibold text-slate-700">
+              O que você gostaria de criar?
+              <textarea id="contact-message" required name="message" rows={4} minLength={5} maxLength={2000} aria-invalid={Boolean(formErrors.message)} aria-describedby={formErrors.message ? "contact-message-error" : undefined} onBlur={(event) => validateFieldOnBlur("message", event.currentTarget.value)} onChange={() => clearFieldError("message")} className={`mt-2 w-full resize-y rounded-xl border bg-[#faf9f6] px-4 py-3 font-normal outline-none transition focus:ring-4 ${formErrors.message ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="Conte um pouco sobre você e seu trabalho..." />
+              {formErrors.message && <span id="contact-message-error" className="mt-1 block text-xs font-medium text-red-600">{formErrors.message}</span>}
+            </label>
+            <button type="submit" className="mt-6 w-full rounded-full bg-indigo-600 px-6 py-3.5 text-sm font-bold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+              Enviar interesse
+            </button>
+            {formSubmitted && (
+              <p role="status" className="mt-4 rounded-xl bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
+                Demonstração: os dados não foram enviados nem armazenados. O formulário precisa ser conectado a um canal de atendimento.
+              </p>
+            )}
+          </form>
+        </div>
+      </section>
+
+      <footer className="border-t border-slate-200 bg-white px-5 py-7 text-center text-sm text-slate-500">
+        <p><span className="font-bold text-slate-900">bioweb</span> · Sua presença digital, do seu jeito.</p>
+        <p className="mt-1 text-xs">© {new Date().getFullYear()} BioWeb. Valores de planos ilustrativos.</p>
+      </footer>
+    </main>
+  );
+}
