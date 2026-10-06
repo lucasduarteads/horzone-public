@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
 import Carousel from "./components/Carousel";
@@ -237,110 +237,110 @@ function Portfolio() {
       </div>
 
       <div className="mx-auto flex w-full max-w-[552px] flex-col items-center px-4 text-center sm:max-w-2xl sm:px-6 md:max-w-3xl lg:max-w-4xl lg:px-8 xl:max-w-5xl 2xl:max-w-6xl">
-      <Header audioMuted={audioMuted} topVideoRef={topVideoRef} toggleAudio={toggleAudio} />
+        <Header audioMuted={audioMuted} topVideoRef={topVideoRef} toggleAudio={toggleAudio} />
 
-      <Reveal className="w-full">
-        <Carousel />
-      </Reveal>
-
-      <Reveal className="mb-8 w-full py-6">
-        <a href="./voucher.html" className="mx-auto flex w-full flex-col items-center justify-center rounded-2xl border border-blue-500 bg-white/90 px-2 py-4 text-slate-800 shadow-md transition hover:-translate-y-0.5 active:bg-blue-500 active:text-white md:max-w-md">
-          <img src="./img/voucher.png" width="50" alt="" className="mb-1.5" loading="lazy" />
-          <span className="text-base font-bold">Cupons de Descontos</span>
-        </a>
-      </Reveal>
-
-      <Reveal className="mb-8 flex w-full flex-col gap-4 rounded-2xl border border-blue-500 bg-white/90 p-4 text-left shadow-lg md:grid md:grid-cols-2 md:items-center md:gap-x-6 md:gap-y-2 md:p-6 lg:gap-x-10 lg:p-8">
-        <SectionHeading className="md:col-span-2">Sobre Mim</SectionHeading>
-        <div className="relative h-[220px] overflow-hidden rounded-xl border border-blue-100 sm:h-[280px] md:h-full md:min-h-[300px] lg:min-h-[360px]">
-          <img src="./img/perfillets.svg" alt="Sobre Letícia" className="h-full w-full object-cover" loading="lazy" />
-          <div className="absolute bottom-2.5 left-2.5 flex flex-wrap gap-1.5">
-            {["Curadoria Especial", "Moda Consciente"].map((badge) => <span key={badge} className="rounded-full bg-black/65 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur">{badge}</span>)}
-          </div>
-        </div>
-        <div>
-          <h3 className="mb-2 text-lg font-bold text-slate-800 lg:text-xl">Consciência, Estilo & História</h3>
-          <p className="mb-3 text-[13px] leading-relaxed lg:text-sm">"Desde muito nova, a fotografia sempre me fez brilhar os olhos. Mesmo sem atuar na minha área de formação, a vida já tinha traçado caminhos voltados para o audiovisual. Sempre fui muito tímida, mas ao começar a criar conteúdo, percebi que havia um potencial escondido exatamente atrás dessa timidez.</p>
-          <p className="text-[13px] leading-relaxed lg:text-sm">Hoje, além do audiovisual e da arquitetura/design, a moda também caminha ao meu lado — é através dela que expresso visualmente a minha personalidade e os meus gostos. Arquitetura, moda e audiovisual são os três pilares que definem a minha essência e a forma como enxergo o mundo e o dia a dia."</p>
-        </div>
-      </Reveal>
-
-      <section className="flex w-full flex-col items-center">
-        <SectionHeading>A influenciável</SectionHeading>
-        <Reveal className="mb-8 grid w-full grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
-          {photos.map((photo, index) => (
-            <button key={photo} type="button" onClick={() => setSelectedPhoto(index)} aria-label={`Ampliar foto ${index + 1}`} className="aspect-[3/4] overflow-hidden rounded-2xl border border-blue-500 bg-white/90 shadow-md transition-transform hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600 active:scale-95">
-              <img src={`./img/${photo}`} alt={`Persona UGC ${index + 1}`} className="h-full w-full object-cover" loading="lazy" />
-            </button>
-          ))}
+        <Reveal className="w-full">
+          <Carousel />
         </Reveal>
-      </section>
 
-      {selectedPhoto !== null && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
-          onClick={() => setSelectedPhoto(null)}
-        >
+        <Reveal className="mb-8 w-full py-6">
+          <a href="./voucher.html" className="mx-auto flex w-full flex-col items-center justify-center rounded-2xl border border-blue-500 bg-white/90 px-2 py-4 text-slate-800 shadow-md transition hover:-translate-y-0.5 active:bg-blue-500 active:text-white md:max-w-md">
+            <img src="./img/voucher.png" width="50" alt="" className="mb-1.5" loading="lazy" />
+            <span className="text-base font-bold">Cupons de Descontos</span>
+          </a>
+        </Reveal>
+
+        <Reveal className="mb-8 flex w-full flex-col gap-4 rounded-2xl border border-blue-500 bg-white/90 p-4 text-left shadow-lg md:grid md:grid-cols-2 md:items-center md:gap-x-6 md:gap-y-2 md:p-6 lg:gap-x-10 lg:p-8">
+          <SectionHeading className="md:col-span-2">Sobre Mim</SectionHeading>
+          <div className="relative h-[220px] overflow-hidden rounded-xl border border-blue-100 sm:h-[280px] md:h-full md:min-h-[300px] lg:min-h-[360px]">
+            <img src="./img/perfillets.svg" alt="Sobre Letícia" className="h-full w-full object-cover" loading="lazy" />
+            <div className="absolute bottom-2.5 left-2.5 flex flex-wrap gap-1.5">
+              {["Curadoria Especial", "Moda Consciente"].map((badge) => <span key={badge} className="rounded-full bg-black/65 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur">{badge}</span>)}
+            </div>
+          </div>
+          <div>
+            <h3 className="mb-2 text-lg font-bold text-slate-800 lg:text-xl">Consciência, Estilo & História</h3>
+            <p className="mb-3 text-[13px] leading-relaxed lg:text-sm">"Desde muito nova, a fotografia sempre me fez brilhar os olhos. Mesmo sem atuar na minha área de formação, a vida já tinha traçado caminhos voltados para o audiovisual. Sempre fui muito tímida, mas ao começar a criar conteúdo, percebi que havia um potencial escondido exatamente atrás dessa timidez.</p>
+            <p className="text-[13px] leading-relaxed lg:text-sm">Hoje, além do audiovisual e da arquitetura/design, a moda também caminha ao meu lado — é através dela que expresso visualmente a minha personalidade e os meus gostos. Arquitetura, moda e audiovisual são os três pilares que definem a minha essência e a forma como enxergo o mundo e o dia a dia."</p>
+          </div>
+        </Reveal>
+
+        <section className="flex w-full flex-col items-center">
+          <SectionHeading>A influenciável</SectionHeading>
+          <Reveal className="mb-8 grid w-full grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
+            {photos.map((photo, index) => (
+              <button key={photo} type="button" onClick={() => setSelectedPhoto(index)} aria-label={`Ampliar foto ${index + 1}`} className="aspect-[3/4] overflow-hidden rounded-2xl border border-blue-500 bg-white/90 shadow-md transition-transform hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600 active:scale-95">
+                <img src={`./img/${photo}`} alt={`Persona UGC ${index + 1}`} className="h-full w-full object-cover" loading="lazy" />
+              </button>
+            ))}
+          </Reveal>
+        </section>
+
+        {selectedPhoto !== null && (
           <div
-            role="dialog"
-            aria-modal="true"
-            aria-label={`Foto ampliada ${selectedPhoto + 1}`}
-            className="relative flex max-h-full max-w-full items-center justify-center"
-            onClick={(event) => event.stopPropagation()}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+            onClick={() => setSelectedPhoto(null)}
           >
-            <button
-              type="button"
-              onClick={() => setSelectedPhoto(null)}
-              aria-label="Fechar foto ampliada"
-              className="absolute -right-2 -top-2 z-10 grid h-10 w-10 place-items-center rounded-full bg-white text-2xl font-semibold text-slate-900 shadow-lg transition hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:-right-4 sm:-top-4"
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Foto ampliada ${selectedPhoto + 1}`}
+              className="relative flex max-h-full max-w-full items-center justify-center"
+              onClick={(event) => event.stopPropagation()}
             >
-              ×
-            </button>
-            <img
-              src={`./img/${photos[selectedPhoto]}`}
-              alt={`Persona UGC ${selectedPhoto + 1}`}
-              className="max-h-[85dvh] max-w-full rounded-xl object-contain shadow-2xl"
-            />
+              <button
+                type="button"
+                onClick={() => setSelectedPhoto(null)}
+                aria-label="Fechar foto ampliada"
+                className="absolute -right-2 -top-2 z-10 grid h-10 w-10 place-items-center rounded-full bg-white text-2xl font-semibold text-slate-900 shadow-lg transition hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:-right-4 sm:-top-4"
+              >
+                ×
+              </button>
+              <img
+                src={`./img/${photos[selectedPhoto]}`}
+                alt={`Persona UGC ${selectedPhoto + 1}`}
+                className="max-h-[85dvh] max-w-full rounded-xl object-contain shadow-2xl"
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <section className="mb-8 flex w-full flex-col items-center">
-        <SectionHeading>Avaliações & Feedbacks</SectionHeading>
-        <Reveal className="w-full">
-          <FeedbackGallery />
-        </Reveal>
-      </section>
+        <section className="mb-8 flex w-full flex-col items-center">
+          <SectionHeading>Avaliações & Feedbacks</SectionHeading>
+          <Reveal className="w-full">
+            <FeedbackGallery />
+          </Reveal>
+        </section>
 
-      <section className="flex w-full flex-col items-center">
-        <SectionHeading>Takes Creator</SectionHeading>
-        <Reveal className="mb-8 grid w-full grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
-          {works.map(([video, poster, title, subtitle], index) => (
-            <VideoCard
-              key={video}
-              video={video}
-              poster={poster}
-              title={title}
-              subtitle={subtitle}
-              index={index}
-              active={activeVideo === index}
-              videoRef={(element) => { workVideoRefs.current[index] = element; }}
-              onToggle={toggleWorkVideo}
-            />
-          ))}
-        </Reveal>
-      </section>
+        <section className="flex w-full flex-col items-center">
+          <SectionHeading>Takes Creator</SectionHeading>
+          <Reveal className="mb-8 grid w-full grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
+            {works.map(([video, poster, title, subtitle], index) => (
+              <VideoCard
+                key={video}
+                video={video}
+                poster={poster}
+                title={title}
+                subtitle={subtitle}
+                index={index}
+                active={activeVideo === index}
+                videoRef={(element) => { workVideoRefs.current[index] = element; }}
+                onToggle={toggleWorkVideo}
+              />
+            ))}
+          </Reveal>
+        </section>
 
-      <section className="flex w-full flex-col items-center">
-        <SectionHeading>Contato</SectionHeading>
-        <Reveal className="w-full">
-          <p className="text-sm leading-relaxed">Entre em contato via E-mail ou Whatsapp para parcerias, colaborações ou qualquer outra consulta.</p>
-          <div className="my-5 flex flex-col items-center">
-            <img src="./img/perfillets.svg" alt="Letícia JPG" className="contact-floating-logo h-16 w-16 rounded-full object-cover" loading="lazy" />
-            <p className="mt-2">Bjuu!</p>
-          </div>
-        </Reveal>
-      </section>
+        <section className="flex w-full flex-col items-center">
+          <SectionHeading>Contato</SectionHeading>
+          <Reveal className="w-full">
+            <p className="text-sm leading-relaxed">Entre em contato via E-mail ou Whatsapp para parcerias, colaborações ou qualquer outra consulta.</p>
+            <div className="my-5 flex flex-col items-center">
+              <img src="./img/perfillets.svg" alt="Letícia JPG" className="contact-floating-logo h-16 w-16 rounded-full object-cover" loading="lazy" />
+              <p className="mt-2">Bjuu!</p>
+            </div>
+          </Reveal>
+        </section>
       </div>
 
       <footer className="flex w-full flex-col items-center gap-1 bg-gradient-to-t from-blue-300/70 via-blue-100/40 to-transparent px-4 py-8 text-xs text-slate-700 sm:py-10">
@@ -426,23 +426,31 @@ export default function DevelopmentApp() {
   return (
     <AuthProvider>
       <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/voucher.html" element={<CouponPage />} />
-          <Route path="/portfolio-demo" element={<Portfolio />} />
-          <Route path="/leticiajpg" element={<Portfolio />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/admin" element={<PrivateRoute />}>
-            <Route index element={<AdminDashboardPage />} />
-            <Route path="*" element={<AdminDashboardPage />} />
-          </Route>
-          <Route
-            path="*"
-            element={
-              <main className="grid min-h-screen place-items-center px-6 text-center">
-                <h1 className="text-2xl font-bold">Página não encontrada.</h1>
-              </main>
-            }
-          />
+        {/* Landing Page e Páginas Públicas */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/voucher.html" element={<CouponPage />} />
+        <Route path="/portfolio-demo" element={<Portfolio />} />
+        <Route path="/leticiajpg" element={<Portfolio />} />
+
+        {/* Autenticação e Painel */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/admin" element={<PrivateRoute />}>
+          <Route index element={<AdminDashboardPage />} />
+          <Route path="*" element={<AdminDashboardPage />} />
+        </Route>
+
+        {/* Redirecionamento amigável para tentativas alternativas de login */}
+        <Route path="/admin/login" element={<Navigate to="/login" replace />} />
+
+        {/* Rota Fallback (Página Não Encontrada) */}
+        <Route
+          path="*"
+          element={
+            <main className="grid min-h-screen place-items-center px-6 text-center">
+              <h1 className="text-2xl font-bold">Página não encontrada.</h1>
+            </main>
+          }
+        />
       </Routes>
     </AuthProvider>
   );

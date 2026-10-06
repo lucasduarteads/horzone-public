@@ -47,7 +47,7 @@ function getApiUrl(): string {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(
     () => {
-      const storedToken = window.sessionStorage.getItem(TOKEN_STORAGE_KEY);
+      const storedToken = window.localStorage.getItem(TOKEN_STORAGE_KEY);
       if (isSessionTokenValid(storedToken)) return storedToken;
 
       window.sessionStorage.removeItem(TOKEN_STORAGE_KEY);
@@ -103,8 +103,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!isSessionTokenValid(loginResponse.token)) {
       throw new Error("A API retornou um token inválido ou expirado.");
     }
-    window.localStorage.removeItem(TOKEN_STORAGE_KEY);
-    window.sessionStorage.setItem(TOKEN_STORAGE_KEY, loginResponse.token);
+    window.sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+    window.localStorage.setItem(TOKEN_STORAGE_KEY, loginResponse.token);
     setToken(loginResponse.token);
   }, []);
 
