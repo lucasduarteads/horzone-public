@@ -178,55 +178,108 @@ export default function AdminDashboardPage() {
               <p className="mt-2 text-sm text-slate-500">Os novos contatos aparecerão aqui quando o formulário estiver conectado à API.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[900px] border-collapse text-left text-sm">
-                <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-                  <tr>
-                    <th className="px-5 py-4 font-semibold">Cliente</th>
-                    <th className="px-5 py-4 font-semibold">Telefone</th>
-                    <th className="px-5 py-4 font-semibold">Mensagem</th>
-                    <th className="px-5 py-4 font-semibold">Recebido</th>
-                    <th className="px-5 py-4 font-semibold">Status</th>
-                    <th className="px-5 py-4 font-semibold">Ação</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {leads.map((lead) => (
-                    <tr key={lead._id} className="align-top">
-                      <td className="px-5 py-4">
-                        <p className="font-semibold text-slate-900">{lead.name}</p>
-                        <a href={`mailto:${lead.email}`} className="mt-1 inline-block text-xs text-indigo-700 hover:underline">{lead.email}</a>
-                      </td>
-                      <td className="px-5 py-4 font-mono text-xs">{lead.phone ?? lead.whatsapp ?? "—"}</td>
-                      <td className="max-w-sm px-5 py-4 leading-5 text-slate-600">
-                        <p>{lead.message}</p>
-                        {lead.plan && <p className="mt-2 text-xs font-semibold text-slate-700">Plano: {lead.plan}</p>}
-                        {lead.instagram && <p className="mt-1 break-all text-xs">Instagram/portfólio: {lead.instagram}</p>}
-                      </td>
-                      <td className="whitespace-nowrap px-5 py-4 text-xs text-slate-500">{formatDate(lead.createdAt)}</td>
-                      <td className="px-5 py-4">
+            <>
+              <div className="flex flex-col gap-4 p-4 md:hidden">
+                {leads.map((lead) => (
+                  <article
+                    key={lead._id}
+                    className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+                  >
+                    <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2">
+                      <h3 className="break-words font-bold text-slate-900">{lead.name}</h3>
+                      <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${statusStyles[lead.status]}`}>
+                        {statusLabels[lead.status]}
+                      </span>
+                    </div>
+                    <p className="break-all text-sm text-slate-600">
+                      <strong className="text-xs text-slate-500">E-mail: </strong>
+                      <a href={`mailto:${lead.email}`} className="text-indigo-700 hover:underline">{lead.email}</a>
+                    </p>
+                    <p className="break-words text-sm text-slate-600">
+                      <strong className="text-xs text-slate-500">Telefone: </strong>
+                      {lead.phone ?? lead.whatsapp ?? "—"}
+                    </p>
+                    <div className="text-sm text-slate-600">
+                      <p className="text-xs font-semibold text-slate-500">Mensagem:</p>
+                      <p className="break-words">{lead.message}</p>
+                      {lead.plan && <p className="mt-2 text-xs font-semibold text-slate-700">Plano: {lead.plan}</p>}
+                      {lead.instagram && <p className="mt-1 break-all text-xs">Instagram/portfólio: {lead.instagram}</p>}
+                    </div>
+                    <p className="text-xs text-slate-500">
+                      <strong>Recebido: </strong>{formatDate(lead.createdAt)}
+                    </p>
+                    <div className="flex flex-col gap-2 pt-1">
+                      <label className="text-xs font-semibold text-slate-500">
+                        Status
                         <select
                           aria-label={`Status de ${lead.name}`}
                           value={lead.status}
                           disabled={updatingId === lead._id}
                           onChange={(event) => void changeStatus(lead, event.target.value as LeadStatus)}
-                          className={`rounded-full border-0 px-3 py-1.5 text-xs font-semibold outline-none disabled:opacity-60 ${statusStyles[lead.status]}`}
+                          className={`mt-1 block w-full rounded-xl border-0 px-3 py-2 text-sm font-semibold outline-none disabled:opacity-60 ${statusStyles[lead.status]}`}
                         >
                           {(["novo", "em_atendimento", "fechado"] as const).map((status) => (
                             <option key={status} value={status}>{statusLabels[status]}</option>
                           ))}
                         </select>
-                      </td>
-                      <td className="px-5 py-4">
-                        <a href={getWhatsAppUrl(lead)} target="_blank" rel="noopener noreferrer" className="inline-flex whitespace-nowrap rounded-full bg-emerald-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-emerald-700">
-                          Abrir WhatsApp ↗
-                        </a>
-                      </td>
+                      </label>
+                      <a href={getWhatsAppUrl(lead)} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center whitespace-nowrap rounded-full bg-emerald-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-emerald-700">
+                        Abrir WhatsApp ↗
+                      </a>
+                    </div>
+                  </article>
+                ))}
+              </div>
+              <div className="hidden overflow-x-auto md:block">
+                <table className="w-full min-w-[900px] border-collapse text-left text-sm">
+                  <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                    <tr>
+                      <th className="px-5 py-4 font-semibold">Cliente</th>
+                      <th className="px-5 py-4 font-semibold">Telefone</th>
+                      <th className="px-5 py-4 font-semibold">Mensagem</th>
+                      <th className="px-5 py-4 font-semibold">Recebido</th>
+                      <th className="px-5 py-4 font-semibold">Status</th>
+                      <th className="px-5 py-4 font-semibold">Ação</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {leads.map((lead) => (
+                      <tr key={lead._id} className="align-top">
+                        <td className="px-5 py-4">
+                          <p className="font-semibold text-slate-900">{lead.name}</p>
+                          <a href={`mailto:${lead.email}`} className="mt-1 inline-block text-xs text-indigo-700 hover:underline">{lead.email}</a>
+                        </td>
+                        <td className="px-5 py-4 font-mono text-xs">{lead.phone ?? lead.whatsapp ?? "—"}</td>
+                        <td className="max-w-sm px-5 py-4 leading-5 text-slate-600">
+                          <p>{lead.message}</p>
+                          {lead.plan && <p className="mt-2 text-xs font-semibold text-slate-700">Plano: {lead.plan}</p>}
+                          {lead.instagram && <p className="mt-1 break-all text-xs">Instagram/portfólio: {lead.instagram}</p>}
+                        </td>
+                        <td className="whitespace-nowrap px-5 py-4 text-xs text-slate-500">{formatDate(lead.createdAt)}</td>
+                        <td className="px-5 py-4">
+                          <select
+                            aria-label={`Status de ${lead.name}`}
+                            value={lead.status}
+                            disabled={updatingId === lead._id}
+                            onChange={(event) => void changeStatus(lead, event.target.value as LeadStatus)}
+                            className={`rounded-full border-0 px-3 py-1.5 text-xs font-semibold outline-none disabled:opacity-60 ${statusStyles[lead.status]}`}
+                          >
+                            {(["novo", "em_atendimento", "fechado"] as const).map((status) => (
+                              <option key={status} value={status}>{statusLabels[status]}</option>
+                            ))}
+                          </select>
+                        </td>
+                        <td className="px-5 py-4">
+                          <a href={getWhatsAppUrl(lead)} target="_blank" rel="noopener noreferrer" className="inline-flex whitespace-nowrap rounded-full bg-emerald-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-emerald-700">
+                            Abrir WhatsApp ↗
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </section>
         <p className="mt-4 text-xs leading-5 text-slate-500">Por segurança, saia do painel ao terminar de usar em um dispositivo compartilhado.</p>
