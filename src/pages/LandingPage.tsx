@@ -1,5 +1,6 @@
-import { useState, type FormEvent, type MouseEvent } from "react";
+import { useRef, useState, type FormEvent, type MouseEvent } from "react";
 import { getPlatformHostname } from "../config/platform";
+import { submitLead } from "../services/leadService";
 
 const platformHostname = getPlatformHostname();
 
@@ -67,14 +68,14 @@ const plans = [
   },
 ];
 
-type ContactField = "name" | "email" | "whatsapp" | "social" | "plan" | "message";
+type ContactField = "name" | "email" | "phone" | "instagram" | "plan" | "message";
 type ContactErrors = Partial<Record<ContactField, string>>;
 
 const contactFields: ContactField[] = [
   "name",
   "email",
-  "whatsapp",
-  "social",
+  "phone",
+  "instagram",
   "plan",
   "message",
 ];
@@ -97,7 +98,7 @@ async function validateContactField(
         return "Informe um e-mail válido.";
       }
       return "";
-    case "whatsapp": {
+    case "phone": {
       if (!trimmedValue) return "Informe seu WhatsApp com DDD.";
       if (trimmedValue.length > 30) return "Use no máximo 30 caracteres.";
 
@@ -122,7 +123,7 @@ async function validateContactField(
 
       return "";
     }
-    case "social":
+    case "instagram":
       if (!trimmedValue) return "";
       if (trimmedValue.length > 200) return "Use no máximo 200 caracteres.";
       let isHttpUrl = false;
@@ -159,7 +160,12 @@ async function validateContactField(
 
 export default function LandingPage() {
   const [selectedPlan, setSelectedPlan] = useState("");
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitLock = useRef(false);
+  const [formFeedback, setFormFeedback] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
   const [formErrors, setFormErrors] = useState<ContactErrors>({});
 
   const scrollToSection = (
@@ -186,29 +192,60 @@ export default function LandingPage() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submitLock.current) return;
+    submitLock.current = true;
+    setIsSubmitting(true);
 
     const form = event.currentTarget;
-    const formData = new FormData(form);
-    const nextErrors: ContactErrors = {};
-    for (const field of contactFields) {
-      const value =
-        field === "plan"
-          ? selectedPlan
-          : String(formData.get(field) ?? "");
-      const error = await validateContactField(field, value);
-      if (error) nextErrors[field] = error;
-    }
+    setFormFeedback(null);
+    try {
+      const formData = new FormData(form);
+      const nextErrors: ContactErrors = {};
+      for (const field of contactFields) {
+        const value =
+          field === "plan"
+            ? selectedPlan
+            : String(formData.get(field) ?? "");
+        const error = await validateContactField(field, value);
+        if (error) nextErrors[field] = error;
+      }
 
-    setFormErrors(nextErrors);
-    setFormSubmitted(false);
-    const firstInvalidField = contactFields.find((field) => nextErrors[field]);
-    if (firstInvalidField) {
-      const invalidElement = form.elements.namedItem(firstInvalidField);
-      if (invalidElement instanceof HTMLElement) invalidElement.focus();
-      return;
-    }
+      setFormErrors(nextErrors);
+      const firstInvalidField = contactFields.find((field) => nextErrors[field]);
+      if (firstInvalidField) {
+        const invalidElement = form.elements.namedItem(firstInvalidField);
+        if (invalidElement instanceof HTMLElement) invalidElement.focus();
+        return;
+      }
 
-    setFormSubmitted(true);
+      await submitLead({
+        name: String(formData.get("name") ?? "").trim(),
+        email: String(formData.get("email") ?? "").trim(),
+        phone: String(formData.get("phone") ?? "").trim(),
+        instagram:
+          String(formData.get("instagram") ?? "").trim() || undefined,
+        plan: selectedPlan || "Ainda quero conhecer",
+        message: String(formData.get("message") ?? "").trim(),
+      });
+      form.reset();
+      setSelectedPlan("");
+      setFormErrors({});
+      setFormFeedback({
+        type: "success",
+        message: "Recebemos seus dados! Em breve entraremos em contato.",
+      });
+    } catch (error) {
+      setFormFeedback({
+        type: "error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Não foi possível enviar seus dados. Tente novamente.",
+      });
+    } finally {
+      submitLock.current = false;
+      setIsSubmitting(false);
+    }
   };
 
   const validateFieldOnBlur = async (
@@ -235,7 +272,7 @@ export default function LandingPage() {
   };
 
   const clearFieldError = (field: ContactField) => {
-    setFormSubmitted(false);
+    setFormFeedback(null);
     setFormErrors((current) => {
       if (!current[field]) return current;
       const next = { ...current };
@@ -467,14 +504,11 @@ export default function LandingPage() {
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600">Vamos conversar</p>
             <h2 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Sua próxima oportunidade pode começar com um link.</h2>
             <p className="mt-5 leading-7 text-slate-600">
-              Deixe seus dados e conte o que você precisa. Estamos preparando o canal de atendimento da BioWeb.
+              Deixe seus dados e conte o que você precisa. Nossa equipe entrará em contato em breve.
             </p>
-            <div className="mt-8 rounded-2xl border border-indigo-100 bg-indigo-50 p-5 text-sm leading-6 text-indigo-950">
-              <strong>Importante:</strong> este formulário é uma demonstração e não envia seus dados. O envio será conectado quando o canal de atendimento estiver configurado.
-            </div>
           </div>
 
-          <form noValidate onSubmit={handleSubmit} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5 sm:p-8">
+          <form noValidate onSubmit={handleSubmit} aria-busy={isSubmitting} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5 sm:p-8">
             <div className="grid gap-5 sm:grid-cols-2">
               <label className="text-sm font-semibold text-slate-700">
                 Seu nome
@@ -488,14 +522,14 @@ export default function LandingPage() {
               </label>
               <label className="text-sm font-semibold text-slate-700">
                 WhatsApp
-                <input id="contact-whatsapp" required name="whatsapp" type="tel" autoComplete="tel" inputMode="tel" maxLength={30} aria-invalid={Boolean(formErrors.whatsapp)} aria-describedby={formErrors.whatsapp ? "contact-whatsapp-error" : undefined} onBlur={(event) => validateFieldOnBlur("whatsapp", event.currentTarget.value)} onChange={() => clearFieldError("whatsapp")} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 font-normal outline-none transition focus:ring-4 ${formErrors.whatsapp ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="(11) 99999-9999" />
-                {formErrors.whatsapp && <span id="contact-whatsapp-error" className="mt-1 block text-xs font-medium text-red-600">{formErrors.whatsapp}</span>}
+                <input id="contact-whatsapp" required name="phone" type="tel" autoComplete="tel" inputMode="tel" maxLength={30} aria-invalid={Boolean(formErrors.phone)} aria-describedby={formErrors.phone ? "contact-whatsapp-error" : undefined} onBlur={(event) => validateFieldOnBlur("phone", event.currentTarget.value)} onChange={() => clearFieldError("phone")} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 font-normal outline-none transition focus:ring-4 ${formErrors.phone ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="(11) 99999-9999" />
+                {formErrors.phone && <span id="contact-whatsapp-error" className="mt-1 block text-xs font-medium text-red-600">{formErrors.phone}</span>}
               </label>
             </div>
             <label className="mt-5 block text-sm font-semibold text-slate-700">
               Instagram ou portfólio (opcional)
-              <input id="contact-social" name="social" maxLength={200} aria-invalid={Boolean(formErrors.social)} aria-describedby={formErrors.social ? "contact-social-error" : undefined} onBlur={(event) => validateFieldOnBlur("social", event.currentTarget.value)} onChange={() => clearFieldError("social")} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 font-normal outline-none transition focus:ring-4 ${formErrors.social ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="@seuperfil ou link https://" />
-              {formErrors.social && <span id="contact-social-error" className="mt-1 block text-xs font-medium text-red-600">{formErrors.social}</span>}
+              <input id="contact-social" name="instagram" maxLength={200} aria-invalid={Boolean(formErrors.instagram)} aria-describedby={formErrors.instagram ? "contact-social-error" : undefined} onBlur={(event) => validateFieldOnBlur("instagram", event.currentTarget.value)} onChange={() => clearFieldError("instagram")} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 font-normal outline-none transition focus:ring-4 ${formErrors.instagram ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="@seuperfil ou link https://" />
+              {formErrors.instagram && <span id="contact-social-error" className="mt-1 block text-xs font-medium text-red-600">{formErrors.instagram}</span>}
             </label>
             <label className="mt-5 block text-sm font-semibold text-slate-700">
               Plano de interesse
@@ -510,12 +544,19 @@ export default function LandingPage() {
               <textarea id="contact-message" required name="message" rows={4} minLength={5} maxLength={2000} aria-invalid={Boolean(formErrors.message)} aria-describedby={formErrors.message ? "contact-message-error" : undefined} onBlur={(event) => validateFieldOnBlur("message", event.currentTarget.value)} onChange={() => clearFieldError("message")} className={`mt-2 w-full resize-y rounded-xl border bg-[#faf9f6] px-4 py-3 font-normal outline-none transition focus:ring-4 ${formErrors.message ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="Conte um pouco sobre você e seu trabalho..." />
               {formErrors.message && <span id="contact-message-error" className="mt-1 block text-xs font-medium text-red-600">{formErrors.message}</span>}
             </label>
-            <button type="submit" className="mt-6 w-full rounded-full bg-indigo-600 px-6 py-3.5 text-sm font-bold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-              Enviar interesse
+            <button type="submit" disabled={isSubmitting} className="mt-6 w-full rounded-full bg-indigo-600 px-6 py-3.5 text-sm font-bold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-60">
+              {isSubmitting ? "Enviando..." : "Enviar interesse"}
             </button>
-            {formSubmitted && (
-              <p role="status" className="mt-4 rounded-xl bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
-                Demonstração: os dados não foram enviados nem armazenados. O formulário precisa ser conectado a um canal de atendimento.
+            {formFeedback && (
+              <p
+                role={formFeedback.type === "error" ? "alert" : "status"}
+                className={`mt-4 rounded-xl px-4 py-3 text-sm leading-6 ${
+                  formFeedback.type === "success"
+                    ? "bg-emerald-50 text-emerald-900"
+                    : "bg-red-50 text-red-900"
+                }`}
+              >
+                {formFeedback.message}
               </p>
             )}
           </form>

@@ -39,7 +39,8 @@ function formatDate(value: string): string {
 }
 
 function getWhatsAppUrl(lead: AdminLead): string {
-  const phone = lead.whatsapp.replace(/\D/g, "");
+  const phoneNumber = lead.phone ?? lead.whatsapp ?? "";
+  const phone = phoneNumber.replace(/\D/g, "");
   const message = `Olá, ${lead.name}! Aqui é da BioWeb. Recebemos seu contato e gostaríamos de conversar sobre: ${lead.message}`;
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }
@@ -182,7 +183,7 @@ export default function AdminDashboardPage() {
                 <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                   <tr>
                     <th className="px-5 py-4 font-semibold">Cliente</th>
-                    <th className="px-5 py-4 font-semibold">WhatsApp</th>
+                    <th className="px-5 py-4 font-semibold">Telefone</th>
                     <th className="px-5 py-4 font-semibold">Mensagem</th>
                     <th className="px-5 py-4 font-semibold">Recebido</th>
                     <th className="px-5 py-4 font-semibold">Status</th>
@@ -196,8 +197,12 @@ export default function AdminDashboardPage() {
                         <p className="font-semibold text-slate-900">{lead.name}</p>
                         <a href={`mailto:${lead.email}`} className="mt-1 inline-block text-xs text-indigo-700 hover:underline">{lead.email}</a>
                       </td>
-                      <td className="px-5 py-4 font-mono text-xs">{lead.whatsapp}</td>
-                      <td className="max-w-sm px-5 py-4 leading-5 text-slate-600">{lead.message}</td>
+                      <td className="px-5 py-4 font-mono text-xs">{lead.phone ?? lead.whatsapp ?? "—"}</td>
+                      <td className="max-w-sm px-5 py-4 leading-5 text-slate-600">
+                        <p>{lead.message}</p>
+                        {lead.plan && <p className="mt-2 text-xs font-semibold text-slate-700">Plano: {lead.plan}</p>}
+                        {lead.instagram && <p className="mt-1 break-all text-xs">Instagram/portfólio: {lead.instagram}</p>}
+                      </td>
                       <td className="whitespace-nowrap px-5 py-4 text-xs text-slate-500">{formatDate(lead.createdAt)}</td>
                       <td className="px-5 py-4">
                         <select

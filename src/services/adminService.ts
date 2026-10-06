@@ -4,7 +4,10 @@ export interface AdminLead {
   _id: string;
   name: string;
   email: string;
-  whatsapp: string;
+  phone?: string;
+  whatsapp?: string;
+  instagram?: string;
+  plan?: string;
   message: string;
   status: LeadStatus;
   createdAt: string;
