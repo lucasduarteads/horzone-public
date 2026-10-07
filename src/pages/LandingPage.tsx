@@ -46,26 +46,30 @@ const plans = [
     name: "Creator",
     price: "450",
     description:
-      "Mini Site / Padrão Bio para transmitir autoridade e apresentar seus serviços.",
+      "Mini Site Mobile / Padrão Bio para transmitir autoridade e apresentar seus serviços.",
     features: [
       "Identidade visual alinhada",
       "Botões institucionais e seção 'Sobre'",
       "Apresentação de até 3 serviços",
+      "Carrossel de banners / projetos",
       "Botão flutuante de WhatsApp",
     ],
     featured: true,
   },
   {
     name: "Pro",
-    price: "1500",
+    price: "3800",
     description:
-      "Página Mobile Completa para alta conversão e presença digital robusta.",
+      "Página Responsiva para desktop e mobile, com alta conversão e presença digital robusta.",
     features: [
       "Carrossel de banners / projetos",
-      "Catálogo de múltiplos serviços",
+      "Seção 'Sobre' com foto e texto",
+      "Catálogo de múltiplos serviços (Consultar)",
       "Sessão de depoimentos",
-      "Formulário / backend dinâmico",
+      "Botão flutuante de WhatsApp",
+      "Formulário / Banco de leads",
       "Integração com métricas (Pixel / Analytics)",
+      "Adicionais a combinar (consultoria, SEO, copywriting, etc.)",
     ],
   },
 ];
