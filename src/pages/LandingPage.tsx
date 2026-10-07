@@ -67,7 +67,7 @@ const plans = [
     name: "Pro",
     price: "3800",
     description:
-      "Página Responsiva para desktop e mobile, ideal para profissionais que querem apresentar seu trabalho de forma completa.",
+      "Página institucional Responsiva para desktop e mobile, ideal para profissionais que querem apresentar seu trabalho de forma completa.",
     features: [
       "Página com estrutura completa de marketing e vendas",
       "Seção 'Sobre nós' com foto e texto",
