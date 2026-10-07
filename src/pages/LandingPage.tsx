@@ -31,8 +31,7 @@ const services = [
 const plans = [
   {
     name: "Essencial",
-    price: "39",
-    cents: "90",
+    price: "150–250",
     description: "Para começar a apresentar seu trabalho com profissionalismo.",
     features: [
       "Página personalizada",
@@ -43,8 +42,7 @@ const plans = [
   },
   {
     name: "Creator",
-    price: "69",
-    cents: "90",
+    price: "250–450",
     description: "Mais espaço para mostrar seu conteúdo e fechar parcerias.",
     features: [
       "Tudo do Essencial",
@@ -56,8 +54,7 @@ const plans = [
   },
   {
     name: "Pro",
-    price: "119",
-    cents: "90",
+    price: "450–800+",
     description: "Uma presença digital completa para sua marca pessoal.",
     features: [
       "Tudo do Creator",
@@ -455,7 +452,7 @@ export default function LandingPage() {
       <section id="planos" className="landing-fullscreen-section landing-plan-section scroll-mt-0 bg-slate-950 py-12 text-white sm:py-16 lg:py-8">
         <div className="landing-plan-content mx-auto max-w-7xl px-5 sm:px-8">
           <div className="landing-plan-intro mx-auto max-w-2xl text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-300">Planos mensais</p>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-300">Valores por projeto</p>
             <h2 className="landing-plan-title mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Escolha como quer aparecer.</h2>
             <p className="landing-plan-subtitle mt-4 leading-7 text-slate-300">Comece com o essencial e evolua junto com a sua carreira.</p>
           </div>
@@ -470,9 +467,8 @@ export default function LandingPage() {
                 <p className="landing-plan-description mt-2 min-h-12 text-sm leading-6 text-slate-300">{plan.description}</p>
                 <p className="landing-plan-price mt-6">
                   <span className="text-sm text-slate-300">R$</span>{" "}
-                  <span className="text-5xl font-bold tracking-tight">{plan.price}</span>
-                  <span className="text-lg font-semibold">,{plan.cents}</span>
-                  <span className="ml-1 text-sm text-slate-300">/ mês*</span>
+                  <span className="whitespace-nowrap text-3xl font-bold tracking-tight sm:text-4xl">{plan.price}</span>
+                  <span className="ml-1 text-sm text-slate-300">por projeto</span>
                 </p>
                 <ul className="landing-plan-features mt-7 flex-1 space-y-3 border-t border-white/10 pt-6 text-sm text-slate-200">
                   {plan.features.map((feature) => (
@@ -495,6 +491,35 @@ export default function LandingPage() {
             ))}
           </div>
           <p className="landing-plan-footnote mt-5 text-center text-xs text-slate-400">* Preços ilustrativos, sujeitos a alteração. Contratação e cobrança ainda não estão habilitadas.</p>
+        </div>
+      </section>
+
+      <section className="landing-fullscreen-section scroll-mt-0 bg-white py-12 sm:py-16 lg:py-8">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600">Mais do que um link</p>
+            <h2 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Benefícios para transformar visitas em contatos.</h2>
+          </div>
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
+            <article className="rounded-3xl border border-slate-200 bg-[#faf9f6] p-7">
+              <h3 className="text-xl font-bold">Experiência de aplicativo</h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                Mobile-first e feita para abrir rapidamente dentro do navegador do Instagram ou TikTok, sem redirecionar por links externos lentos.
+              </p>
+            </article>
+            <article className="rounded-3xl border border-slate-200 bg-[#faf9f6] p-7">
+              <h3 className="text-xl font-bold">Apresentação visual completa</h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                O carrossel valoriza seu portfólio, provas sociais ou fotos de produtos e ajuda a manter o visitante interessado por mais tempo.
+              </p>
+            </article>
+            <article className="rounded-3xl border border-slate-200 bg-[#faf9f6] p-7">
+              <h3 className="text-xl font-bold">Contato bem organizado</h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                Diferentes botões podem direcionar o cliente à mensagem certa no WhatsApp, como “Olá, vi o serviço X no link da bio”.
+              </p>
+            </article>
+          </div>
         </div>
       </section>
 
