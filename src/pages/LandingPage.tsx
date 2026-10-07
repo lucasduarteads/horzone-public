@@ -1,6 +1,12 @@
-import { useRef, useState, type FormEvent, type MouseEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type MouseEvent,
+} from "react";
 import { getPlatformHostname } from "../config/platform";
-import { submitLead } from "../services/leadService";
+import { submitLead, warmLeadService } from "../services/leadService";
 
 const platformHostname = getPlatformHostname();
 
@@ -165,6 +171,18 @@ export default function LandingPage() {
   } | null>(null);
   const [formErrors, setFormErrors] = useState<ContactErrors>({});
 
+  useEffect(() => {
+    void warmLeadService().catch((error: unknown) => {
+      console.warn("Não foi possível pré-aquecer a API de leads:", error);
+    });
+  }, []);
+
+  const prewarmLeadService = () => {
+    void warmLeadService().catch((error: unknown) => {
+      console.warn("Não foi possível pré-aquecer a API de leads:", error);
+    });
+  };
+
   const scrollToSection = (
     event: MouseEvent<HTMLAnchorElement>,
     sectionId: string,
@@ -198,14 +216,16 @@ export default function LandingPage() {
     try {
       const formData = new FormData(form);
       const nextErrors: ContactErrors = {};
-      for (const field of contactFields) {
-        const value =
-          field === "plan"
-            ? selectedPlan
-            : String(formData.get(field) ?? "");
-        const error = await validateContactField(field, value);
-        if (error) nextErrors[field] = error;
-      }
+      await Promise.all(
+        contactFields.map(async (field) => {
+          const value =
+            field === "plan"
+              ? selectedPlan
+              : String(formData.get(field) ?? "");
+          const error = await validateContactField(field, value);
+          if (error) nextErrors[field] = error;
+        }),
+      );
 
       setFormErrors(nextErrors);
       const firstInvalidField = contactFields.find((field) => nextErrors[field]);
@@ -533,32 +553,32 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <form noValidate onSubmit={handleSubmit} aria-busy={isSubmitting} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5 sm:p-8">
+          <form noValidate onSubmit={handleSubmit} onFocusCapture={prewarmLeadService} aria-busy={isSubmitting} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-950/5 sm:p-8">
             <div className="grid gap-5 sm:grid-cols-2">
               <label className="text-sm font-semibold text-slate-700">
                 Seu nome
-                <input id="contact-name" required name="name" autoComplete="name" minLength={2} maxLength={100} aria-invalid={Boolean(formErrors.name)} aria-describedby={formErrors.name ? "contact-name-error" : undefined} onBlur={(event) => validateFieldOnBlur("name", event.currentTarget.value)} onChange={() => clearFieldError("name")} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 font-normal outline-none transition focus:ring-4 ${formErrors.name ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="Como podemos te chamar?" />
+                <input id="contact-name" required name="name" autoComplete="name" minLength={2} maxLength={100} aria-invalid={Boolean(formErrors.name)} aria-describedby={formErrors.name ? "contact-name-error" : undefined} onBlur={(event) => validateFieldOnBlur("name", event.currentTarget.value)} onChange={() => clearFieldError("name")} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 text-base font-normal outline-none transition focus:ring-4 md:text-sm ${formErrors.name ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="Como podemos te chamar?" />
                 {formErrors.name && <span id="contact-name-error" className="mt-1 block text-xs font-medium text-red-600">{formErrors.name}</span>}
               </label>
               <label className="text-sm font-semibold text-slate-700">
                 E-mail
-                <input id="contact-email" required name="email" type="email" autoComplete="email" maxLength={254} aria-invalid={Boolean(formErrors.email)} aria-describedby={formErrors.email ? "contact-email-error" : undefined} onBlur={(event) => validateFieldOnBlur("email", event.currentTarget.value)} onChange={() => clearFieldError("email")} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 font-normal outline-none transition focus:ring-4 ${formErrors.email ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="voce@email.com" />
+                <input id="contact-email" required name="email" type="email" autoComplete="email" maxLength={254} aria-invalid={Boolean(formErrors.email)} aria-describedby={formErrors.email ? "contact-email-error" : undefined} onBlur={(event) => validateFieldOnBlur("email", event.currentTarget.value)} onChange={() => clearFieldError("email")} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 text-base font-normal outline-none transition focus:ring-4 md:text-sm ${formErrors.email ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="voce@email.com" />
                 {formErrors.email && <span id="contact-email-error" className="mt-1 block text-xs font-medium text-red-600">{formErrors.email}</span>}
               </label>
               <label className="text-sm font-semibold text-slate-700">
                 WhatsApp
-                <input id="contact-whatsapp" required name="phone" type="tel" autoComplete="tel" inputMode="tel" maxLength={30} aria-invalid={Boolean(formErrors.phone)} aria-describedby={formErrors.phone ? "contact-whatsapp-error" : undefined} onBlur={(event) => validateFieldOnBlur("phone", event.currentTarget.value)} onChange={() => clearFieldError("phone")} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 font-normal outline-none transition focus:ring-4 ${formErrors.phone ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="(11) 99999-9999" />
+                <input id="contact-whatsapp" required name="phone" type="tel" autoComplete="tel" inputMode="tel" maxLength={30} aria-invalid={Boolean(formErrors.phone)} aria-describedby={formErrors.phone ? "contact-whatsapp-error" : undefined} onBlur={(event) => validateFieldOnBlur("phone", event.currentTarget.value)} onChange={() => clearFieldError("phone")} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 text-base font-normal outline-none transition focus:ring-4 md:text-sm ${formErrors.phone ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="(11) 99999-9999" />
                 {formErrors.phone && <span id="contact-whatsapp-error" className="mt-1 block text-xs font-medium text-red-600">{formErrors.phone}</span>}
               </label>
             </div>
             <label className="mt-5 block text-sm font-semibold text-slate-700">
               Instagram ou portfólio (opcional)
-              <input id="contact-social" name="instagram" maxLength={200} aria-invalid={Boolean(formErrors.instagram)} aria-describedby={formErrors.instagram ? "contact-social-error" : undefined} onBlur={(event) => validateFieldOnBlur("instagram", event.currentTarget.value)} onChange={() => clearFieldError("instagram")} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 font-normal outline-none transition focus:ring-4 ${formErrors.instagram ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="@seuperfil ou link https://" />
+              <input id="contact-social" name="instagram" maxLength={200} aria-invalid={Boolean(formErrors.instagram)} aria-describedby={formErrors.instagram ? "contact-social-error" : undefined} onBlur={(event) => validateFieldOnBlur("instagram", event.currentTarget.value)} onChange={() => clearFieldError("instagram")} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 text-base font-normal outline-none transition focus:ring-4 md:text-sm ${formErrors.instagram ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="@seuperfil ou link https://" />
               {formErrors.instagram && <span id="contact-social-error" className="mt-1 block text-xs font-medium text-red-600">{formErrors.instagram}</span>}
             </label>
             <label className="mt-5 block text-sm font-semibold text-slate-700">
               Plano de interesse
-              <select id="contact-plan" name="plan" value={selectedPlan} aria-invalid={Boolean(formErrors.plan)} aria-describedby={formErrors.plan ? "contact-plan-error" : undefined} onBlur={(event) => validateFieldOnBlur("plan", event.currentTarget.value)} onChange={(event) => { setSelectedPlan(event.target.value); clearFieldError("plan"); }} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 font-normal outline-none transition focus:ring-4 ${formErrors.plan ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`}>
+              <select id="contact-plan" name="plan" value={selectedPlan} aria-invalid={Boolean(formErrors.plan)} aria-describedby={formErrors.plan ? "contact-plan-error" : undefined} onBlur={(event) => validateFieldOnBlur("plan", event.currentTarget.value)} onChange={(event) => { setSelectedPlan(event.target.value); clearFieldError("plan"); }} className={`mt-2 w-full rounded-xl border bg-[#faf9f6] px-4 py-3 text-base font-normal outline-none transition focus:ring-4 md:text-sm ${formErrors.plan ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`}>
                 <option value="">Ainda quero conhecer</option>
                 {plans.map((plan) => <option key={plan.name} value={plan.name}>{plan.name}</option>)}
               </select>
@@ -566,10 +586,16 @@ export default function LandingPage() {
             </label>
             <label className="mt-5 block text-sm font-semibold text-slate-700">
               O que você gostaria de criar?
-              <textarea id="contact-message" required name="message" rows={4} minLength={5} maxLength={2000} aria-invalid={Boolean(formErrors.message)} aria-describedby={formErrors.message ? "contact-message-error" : undefined} onBlur={(event) => validateFieldOnBlur("message", event.currentTarget.value)} onChange={() => clearFieldError("message")} className={`mt-2 w-full resize-y rounded-xl border bg-[#faf9f6] px-4 py-3 font-normal outline-none transition focus:ring-4 ${formErrors.message ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="Conte um pouco sobre você e seu trabalho..." />
+              <textarea id="contact-message" required name="message" rows={4} minLength={5} maxLength={2000} aria-invalid={Boolean(formErrors.message)} aria-describedby={formErrors.message ? "contact-message-error" : undefined} onBlur={(event) => validateFieldOnBlur("message", event.currentTarget.value)} onChange={() => clearFieldError("message")} className={`mt-2 w-full resize-y rounded-xl border bg-[#faf9f6] px-4 py-3 text-base font-normal outline-none transition focus:ring-4 md:text-sm ${formErrors.message ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-500/10"}`} placeholder="Conte um pouco sobre você e seu trabalho..." />
               {formErrors.message && <span id="contact-message-error" className="mt-1 block text-xs font-medium text-red-600">{formErrors.message}</span>}
             </label>
             <button type="submit" disabled={isSubmitting} className="mt-6 w-full rounded-full bg-indigo-600 px-6 py-3.5 text-sm font-bold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-60">
+              {isSubmitting && (
+                <span
+                  aria-hidden="true"
+                  className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white align-[-3px]"
+                />
+              )}
               {isSubmitting ? "Enviando..." : "Enviar interesse"}
             </button>
             {formFeedback && (

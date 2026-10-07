@@ -156,7 +156,7 @@ export default function AdminDashboardPage() {
             <select
               value={filter}
               onChange={(event) => setFilter(event.target.value as LeadStatus | "todos")}
-              className="mt-1.5 block min-w-48 rounded-xl border border-slate-300 bg-white px-4 py-2.5 font-normal outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"
+              className="mt-1.5 block min-w-48 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-base font-normal outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 md:text-sm"
             >
               {statusOptions.map((status) => (
                 <option key={status} value={status}>
@@ -216,7 +216,7 @@ export default function AdminDashboardPage() {
                           value={lead.status}
                           disabled={updatingId === lead._id}
                           onChange={(event) => void changeStatus(lead, event.target.value as LeadStatus)}
-                          className={`mt-1 block w-full rounded-xl border-0 px-3 py-2 text-sm font-semibold outline-none disabled:opacity-60 ${statusStyles[lead.status]}`}
+                          className={`mt-1 block w-full rounded-xl border-0 px-3 py-2 text-base font-semibold outline-none disabled:opacity-60 md:text-sm ${statusStyles[lead.status]}`}
                         >
                           {(["novo", "em_atendimento", "fechado"] as const).map((status) => (
                             <option key={status} value={status}>{statusLabels[status]}</option>
@@ -262,7 +262,7 @@ export default function AdminDashboardPage() {
                             value={lead.status}
                             disabled={updatingId === lead._id}
                             onChange={(event) => void changeStatus(lead, event.target.value as LeadStatus)}
-                            className={`rounded-full border-0 px-3 py-1.5 text-xs font-semibold outline-none disabled:opacity-60 ${statusStyles[lead.status]}`}
+                            className={`rounded-full border-0 px-3 py-1.5 text-base font-semibold outline-none disabled:opacity-60 md:text-xs ${statusStyles[lead.status]}`}
                           >
                             {(["novo", "em_atendimento", "fechado"] as const).map((status) => (
                               <option key={status} value={status}>{statusLabels[status]}</option>

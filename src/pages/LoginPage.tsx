@@ -81,7 +81,7 @@ export default function LoginPage() {
                 }}
                 aria-invalid={Boolean(fieldErrors.email)}
                 aria-describedby={fieldErrors.email ? "login-email-error" : undefined}
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-[#faf9f6] px-4 py-3 font-normal outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 aria-[invalid=true]:border-red-500"
+                className="mt-2 w-full rounded-xl border border-slate-300 bg-[#faf9f6] px-4 py-3 text-base font-normal outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 aria-[invalid=true]:border-red-500 md:text-sm"
                 placeholder="admin@bioweb.local"
               />
               {fieldErrors.email && (
@@ -110,7 +110,7 @@ export default function LoginPage() {
                   }}
                   aria-invalid={Boolean(fieldErrors.password)}
                   aria-describedby={fieldErrors.password ? "login-password-error" : undefined}
-                  className="w-full rounded-xl border border-slate-300 bg-[#faf9f6] px-4 py-3 pr-12 font-normal outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 aria-[invalid=true]:border-red-500"
+                  className="w-full rounded-xl border border-slate-300 bg-[#faf9f6] px-4 py-3 pr-12 text-base font-normal outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 aria-[invalid=true]:border-red-500 md:text-sm"
                   placeholder="Sua senha administrativa"
                 />
                 <button

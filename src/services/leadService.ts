@@ -14,6 +14,45 @@ export class LeadServiceError extends Error {
   }
 }
 
+const warmupTtlMs = 60_000;
+let warmupPromise: Promise<void> | undefined;
+let lastWarmupAt = 0;
+
+export function warmLeadService(): Promise<void> {
+  const apiUrl = import.meta.env.VITE_API_URL?.trim();
+  if (!apiUrl) {
+    return Promise.reject(
+      new LeadServiceError("O serviço está temporariamente indisponível."),
+    );
+  }
+
+  if (warmupPromise) return warmupPromise;
+  if (Date.now() - lastWarmupAt < warmupTtlMs) return Promise.resolve();
+
+  warmupPromise = fetch(`${apiUrl.replace(/\/+$/, "")}/health`, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new LeadServiceError(
+          "Não foi possível aquecer a conexão com o servidor.",
+          response.status,
+        );
+      }
+      lastWarmupAt = Date.now();
+    })
+    .catch((error: unknown) => {
+      warmupPromise = undefined;
+      throw error;
+    })
+    .finally(() => {
+      warmupPromise = undefined;
+    });
+
+  return warmupPromise;
+}
+
 export async function submitLead(lead: LeadSubmission): Promise<void> {
   const apiUrl = import.meta.env.VITE_API_URL?.trim();
   if (!apiUrl) {
