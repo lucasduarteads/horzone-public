@@ -3,7 +3,6 @@ import {
   useRef,
   useState,
   type FormEvent,
-  type MouseEvent,
 } from "react";
 import { submitLead, warmLeadService } from "../services/leadService";
 
@@ -186,26 +185,11 @@ export default function LandingPage() {
     });
   };
 
-  const scrollToSection = (
-    event: MouseEvent<HTMLAnchorElement>,
-    sectionId: string,
-  ) => {
+  const scrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId);
     if (!section) return;
 
-    event.preventDefault();
-    window.history.pushState(null, "", `#${sectionId}`);
-    const header = document.querySelector("header");
-    const targetTop =
-      section.getBoundingClientRect().top +
-      window.scrollY -
-      (header?.getBoundingClientRect().height ?? 0);
-    window.scrollTo({
-      top: targetTop,
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        ? "auto"
-        : "smooth",
-    });
+    section.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -315,17 +299,17 @@ export default function LandingPage() {
             <span className="text-xl font-bold tracking-tight">bioweb</span>
           </a>
           <div className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
-            <a className="transition hover:text-indigo-700" href="#servicos" onClick={(event) => scrollToSection(event, "servicos")}>Serviços</a>
-            <a className="transition hover:text-indigo-700" href="#planos" onClick={(event) => scrollToSection(event, "planos")}>Planos</a>
-            <a className="transition hover:text-indigo-700" href="#como-funciona" onClick={(event) => scrollToSection(event, "como-funciona")}>Como funciona</a>
+            <button type="button" className="transition hover:text-indigo-700" onClick={() => scrollToSection("servicos")}>Serviços</button>
+            <button type="button" className="transition hover:text-indigo-700" onClick={() => scrollToSection("planos")}>Planos</button>
+            <button type="button" className="transition hover:text-indigo-700" onClick={() => scrollToSection("como-funciona")}>Como funciona</button>
           </div>
-          <a
-            href="#contato"
-            onClick={(event) => scrollToSection(event, "contato")}
+          <button
+            type="button"
+            onClick={() => scrollToSection("contato")}
             className="rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/15 transition hover:-translate-y-0.5 hover:bg-indigo-700"
           >
             Fale com a gente
-          </a>
+          </button>
         </nav>
       </header>
 
@@ -350,20 +334,20 @@ export default function LandingPage() {
               clientes.
             </p>
             <div className="landing-hero-actions mt-9 flex flex-col gap-3 sm:flex-row">
-              <a
-                href="#planos"
-                onClick={(event) => scrollToSection(event, "planos")}
+              <button
+                type="button"
+                onClick={() => scrollToSection("planos")}
                 className="rounded-full bg-indigo-600 px-7 py-3.5 text-center text-sm font-semibold text-white shadow-xl shadow-indigo-600/20 transition hover:-translate-y-0.5 hover:bg-indigo-700"
               >
                 Conheça os planos
-              </a>
-              <a
-                href="#servicos"
-                onClick={(event) => scrollToSection(event, "servicos")}
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollToSection("servicos")}
                 className="rounded-full border border-slate-300 bg-white/70 px-7 py-3.5 text-center text-sm font-semibold text-slate-800 transition hover:border-indigo-300 hover:bg-white"
               >
                 Descubra a BioWeb
-              </a>
+              </button>
               <a
                 href="/portfolio-demo"
                 className="rounded-full border border-indigo-200 bg-indigo-50 px-7 py-3.5 text-center text-sm font-semibold text-indigo-700 transition hover:border-indigo-300 hover:bg-indigo-100"
@@ -450,9 +434,9 @@ export default function LandingPage() {
             <p className="mt-5 max-w-xl leading-7 text-slate-600">
               Você escolhe um plano e compartilha suas informações. A BioWeb organiza sua presença digital para que seu trabalho seja visto e lembrado.
             </p>
-            <a href="#contato" onClick={(event) => scrollToSection(event, "contato")} className="mt-7 inline-flex items-center gap-2 font-semibold text-indigo-700 hover:text-indigo-900">
+            <button type="button" onClick={() => scrollToSection("contato")} className="mt-7 inline-flex items-center gap-2 font-semibold text-indigo-700 hover:text-indigo-900">
               Quero conversar sobre meu perfil <span aria-hidden="true">→</span>
-            </a>
+            </button>
           </div>
           <ol className="space-y-4">
             {[
@@ -498,16 +482,16 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <a
-                  href="#contato"
-                  onClick={(event) => {
+                <button
+                  type="button"
+                  onClick={() => {
                     setSelectedPlan(plan.name);
-                    scrollToSection(event, "contato");
+                    scrollToSection("contato");
                   }}
                   className={`landing-plan-cta mt-8 block rounded-full px-5 py-3 text-center text-sm font-bold transition hover:-translate-y-0.5 ${plan.featured ? "bg-white text-indigo-950 hover:bg-indigo-100" : "border border-white/20 text-white hover:bg-white/10"}`}
                 >
                   Tenho interesse
-                </a>
+                </button>
               </article>
             ))}
           </div>
