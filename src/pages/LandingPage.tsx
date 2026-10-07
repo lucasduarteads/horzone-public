@@ -5,10 +5,7 @@ import {
   type FormEvent,
   type MouseEvent,
 } from "react";
-import { getPlatformHostname } from "../config/platform";
 import { submitLead, warmLeadService } from "../services/leadService";
-
-const platformHostname = getPlatformHostname();
 
 const services = [
   {
@@ -37,36 +34,38 @@ const services = [
 const plans = [
   {
     name: "Essencial",
-    price: "150–250",
-    description: "Para começar a apresentar seu trabalho com profissionalismo.",
+    price: "250",
+    description: "Linktree-style ideal para uma presença rápida e direta.",
     features: [
-      "Página personalizada",
-      "Redes sociais e links",
-      "Até 6 itens no portfólio",
-      `Endereço ${platformHostname}/seunome`,
+      "Foto de perfil e bio curta",
+      "3 a 5 botões de links simples (WhatsApp, Instagram, Mapa)",
+      "Sem seções dinâmicas",
     ],
   },
   {
     name: "Creator",
-    price: "250–450",
-    description: "Mais espaço para mostrar seu conteúdo e fechar parcerias.",
+    price: "450",
+    description:
+      "Mini Site / Padrão Bio para transmitir autoridade e apresentar seus serviços.",
     features: [
-      "Tudo do Essencial",
-      "Até 20 itens no portfólio",
-      "Vídeo de apresentação",
-      "Personalização visual ampliada",
+      "Identidade visual alinhada",
+      "Botões institucionais e seção 'Sobre'",
+      "Apresentação de até 3 serviços",
+      "Botão flutuante de WhatsApp",
     ],
     featured: true,
   },
   {
     name: "Pro",
-    price: "450–800+",
-    description: "Uma presença digital completa para sua marca pessoal.",
+    price: "1500",
+    description:
+      "Página Mobile Completa para alta conversão e presença digital robusta.",
     features: [
-      "Tudo do Creator",
-      "Domínio próprio (configuração)",
-      "Portfólio ampliado",
-      "Suporte prioritário",
+      "Carrossel de banners / projetos",
+      "Catálogo de múltiplos serviços",
+      "Sessão de depoimentos",
+      "Formulário / backend dinâmico",
+      "Integração com métricas (Pixel / Analytics)",
     ],
   },
 ];
@@ -476,9 +475,7 @@ export default function LandingPage() {
             <h2 className="landing-plan-title mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Escolha como quer aparecer.</h2>
             <p className="landing-plan-subtitle mt-4 leading-7 text-slate-300">Comece com o essencial e evolua junto com a sua carreira.</p>
           </div>
-          <p className="landing-plan-disclaimer mx-auto mt-7 max-w-2xl rounded-xl border border-amber-200/20 bg-amber-100/10 px-4 py-3 text-center text-xs leading-5 text-amber-100">
-            Valores e recursos abaixo são apenas exemplos provisórios para apresentação. Ainda não representam uma oferta comercial.
-          </p>
+          
           <div className="landing-plan-grid mt-10 grid gap-5 md:grid-cols-3">
             {plans.map((plan) => (
               <article key={plan.name} className={`landing-plan-card relative flex min-w-0 flex-col rounded-3xl border p-6 sm:p-8 ${plan.featured ? "border-indigo-400 bg-indigo-950 shadow-2xl shadow-indigo-950/50 lg:-my-3" : "border-white/10 bg-white/[0.04]"}`}>
