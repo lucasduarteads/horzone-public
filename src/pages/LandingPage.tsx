@@ -179,6 +179,30 @@ export default function LandingPage() {
     });
   }, []);
 
+  useEffect(() => {
+    const preventContextMenu = (event: MouseEvent) => {
+      event.preventDefault();
+    };
+
+    const preventRestrictedShortcuts = (event: KeyboardEvent) => {
+      const key = event.key.toLowerCase();
+      const isRestrictedShortcut =
+        (event.ctrlKey || event.metaKey) && ["c", "u", "s"].includes(key);
+
+      if (isRestrictedShortcut || event.key === "F12") {
+        event.preventDefault();
+      }
+    };
+
+    document.addEventListener("contextmenu", preventContextMenu);
+    document.addEventListener("keydown", preventRestrictedShortcuts);
+
+    return () => {
+      document.removeEventListener("contextmenu", preventContextMenu);
+      document.removeEventListener("keydown", preventRestrictedShortcuts);
+    };
+  }, []);
+
   const prewarmLeadService = () => {
     void warmLeadService().catch((error: unknown) => {
       console.warn("Não foi possível pré-aquecer a API de leads:", error);
