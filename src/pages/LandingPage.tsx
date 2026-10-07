@@ -38,6 +38,8 @@ const plans = [
     features: [
       "Foto de perfil e bio curta",
       "3 a 5 botões de links simples (WhatsApp, Instagram, Mapa)",
+      "background color ou imagem de fundo",
+      "Botão flutuante de WhatsApp",
       "Sem seções dinâmicas",
     ],
   },
@@ -52,6 +54,7 @@ const plans = [
       "Apresentação de até 3 serviços",
       "Carrossel de banners / projetos",
       "Botão flutuante de WhatsApp",
+      "seções dinamicas de depoimentos e portfólio",
     ],
     featured: true,
   },
