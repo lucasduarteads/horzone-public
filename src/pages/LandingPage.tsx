@@ -539,6 +539,19 @@ export default function LandingPage() {
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600">Mais do que um link</p>
             <h2 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Benefícios para transformar visitas em contatos.</h2>
           </div>
+          <div className="mt-10 lg:mt-14">
+            <div className="landing-benefits-visual relative mx-auto max-w-2xl">
+              <div aria-hidden="true" className="absolute -inset-6 rounded-[2.5rem] bg-indigo-200/30 blur-3xl" />
+              <img
+                src="/img/biowemockup.png"
+                alt="Mockup da interface da BioWeb"
+                className="landing-benefits-image relative w-full rounded-[2rem] border border-indigo-100 bg-white p-2 shadow-[0_28px_80px_rgba(79,70,229,0.18)]"
+              />
+              <div className="landing-benefits-badge absolute -bottom-4 left-6 rounded-full border border-white/80 bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-indigo-700 shadow-lg shadow-indigo-950/10">
+                Seu perfil em destaque
+              </div>
+            </div>
+          </div>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             <article className="rounded-3xl border border-slate-200 bg-[#faf9f6] p-7">
               <h3 className="text-xl font-bold">Experiência de aplicativo</h3>

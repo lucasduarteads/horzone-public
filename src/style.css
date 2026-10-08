@@ -43,6 +43,29 @@ img {
   user-drag: none;
 }
 
+@keyframes floatSoft {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.landing-benefits-visual {
+  animation: floatSoft 6s ease-in-out infinite;
+}
+
+.landing-benefits-image {
+  display: block;
+}
+
+.landing-benefits-badge {
+  animation: floatSoft 6s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+
 html {
   min-width: 320px;
   min-height: 100%;
