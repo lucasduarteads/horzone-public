@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import {
   AdminServiceError,
+  deleteLead,
   getLeads,
   updateLeadStatus,
   type AdminLead,
@@ -53,6 +54,7 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleLogout = useCallback(() => {
     logout();
@@ -126,6 +128,34 @@ export default function AdminDashboardPage() {
       );
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const removeLead = async (lead: AdminLead) => {
+    if (!token || !window.confirm("Deseja realmente apagar este contato?")) {
+      return;
+    }
+
+    setDeletingId(lead._id);
+    setError("");
+    try {
+      await deleteLead(lead._id, token);
+      setLeads((current) => current.filter((item) => item._id !== lead._id));
+    } catch (requestError) {
+      if (
+        requestError instanceof AdminServiceError &&
+        requestError.status === 401
+      ) {
+        handleLogout();
+        return;
+      }
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : "Não foi possível apagar o contato.",
+      );
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -226,6 +256,14 @@ export default function AdminDashboardPage() {
                       <a href={getWhatsAppUrl(lead)} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center whitespace-nowrap rounded-full bg-emerald-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-emerald-700">
                         Abrir WhatsApp ↗
                       </a>
+                      <button
+                        type="button"
+                        disabled={deletingId === lead._id}
+                        onClick={() => void removeLead(lead)}
+                        className="inline-flex justify-center whitespace-nowrap rounded-full border border-red-200 px-3 py-2 text-xs font-bold text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {deletingId === lead._id ? "Apagando..." : "Apagar"}
+                      </button>
                     </div>
                   </article>
                 ))}
@@ -270,9 +308,19 @@ export default function AdminDashboardPage() {
                           </select>
                         </td>
                         <td className="px-5 py-4">
-                          <a href={getWhatsAppUrl(lead)} target="_blank" rel="noopener noreferrer" className="inline-flex whitespace-nowrap rounded-full bg-emerald-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-emerald-700">
-                            Abrir WhatsApp ↗
-                          </a>
+                          <div className="flex flex-col items-start gap-2">
+                            <a href={getWhatsAppUrl(lead)} target="_blank" rel="noopener noreferrer" className="inline-flex whitespace-nowrap rounded-full bg-emerald-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-emerald-700">
+                              Abrir WhatsApp ↗
+                            </a>
+                            <button
+                              type="button"
+                              disabled={deletingId === lead._id}
+                              onClick={() => void removeLead(lead)}
+                              className="inline-flex whitespace-nowrap rounded-full border border-red-200 px-3 py-2 text-xs font-bold text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                              {deletingId === lead._id ? "Apagando..." : "Apagar"}
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}

@@ -122,3 +122,14 @@ export async function updateLeadStatus(
   }
   return result.data as AdminLead;
 }
+
+export async function deleteLead(
+  leadId: string,
+  token: string,
+): Promise<void> {
+  await authorizedRequest(
+    `/api/v1/leads/${encodeURIComponent(leadId)}`,
+    token,
+    { method: "DELETE" },
+  );
+}
