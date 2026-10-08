@@ -129,7 +129,7 @@ export async function deleteLead(
   token: string,
 ): Promise<void> {
   await authorizedRequest(
-    `/api/v1/admin/leads/${encodeURIComponent(leadId)}`,
+    `/api/v1/leads/${encodeURIComponent(leadId)}`,
     token,
     { method: "DELETE" },
   );
