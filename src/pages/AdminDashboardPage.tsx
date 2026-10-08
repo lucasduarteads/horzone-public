@@ -132,16 +132,31 @@ export default function AdminDashboardPage() {
   };
 
   const removeLead = async (lead: AdminLead) => {
-    if (!token || !window.confirm("Deseja realmente apagar este contato?")) {
+    if (!token) {
+      const message = "Sua sessão expirou. Faça login novamente.";
+      console.error("Não foi possível apagar o contato: token ausente.");
+      window.alert(message);
+      handleLogout();
+      return;
+    }
+    if (!window.confirm("Deseja realmente apagar este contato?")) {
       return;
     }
 
+    const id = lead._id;
     setDeletingId(lead._id);
     setError("");
     try {
-      await deleteLead(lead._id, token);
-      setLeads((current) => current.filter((item) => item._id !== lead._id));
+      await deleteLead(id, token);
+      setLeads((prevLeads) => prevLeads.filter((lead) => lead._id !== id));
     } catch (requestError) {
+      console.error("Falha ao apagar o contato:", requestError);
+      const message =
+        requestError instanceof Error
+          ? requestError.message
+          : "Não foi possível apagar o contato.";
+      setError(message);
+      window.alert(message);
       if (
         requestError instanceof AdminServiceError &&
         requestError.status === 401
@@ -149,11 +164,6 @@ export default function AdminDashboardPage() {
         handleLogout();
         return;
       }
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : "Não foi possível apagar o contato.",
-      );
     } finally {
       setDeletingId(null);
     }

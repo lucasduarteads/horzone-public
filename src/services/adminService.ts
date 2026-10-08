@@ -56,7 +56,8 @@ async function authorizedRequest(
     throw new AdminServiceError("Não foi possível conectar à API.");
   }
 
-  const body: unknown = await response.json().catch(() => null);
+  const body: unknown =
+    response.status === 204 ? null : await response.json().catch(() => null);
   if (!response.ok) {
     const message =
       typeof body === "object" &&
@@ -128,7 +129,7 @@ export async function deleteLead(
   token: string,
 ): Promise<void> {
   await authorizedRequest(
-    `/api/v1/leads/${encodeURIComponent(leadId)}`,
+    `/api/v1/admin/leads/${encodeURIComponent(leadId)}`,
     token,
     { method: "DELETE" },
   );
