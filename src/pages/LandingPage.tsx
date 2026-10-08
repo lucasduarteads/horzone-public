@@ -659,7 +659,7 @@ export default function LandingPage() {
 
       <footer className="border-t border-slate-200 bg-white px-5 py-7 text-center text-sm text-slate-500">
         <p><span className="font-bold text-slate-900">bioweb</span> · Sua presença digital, do seu jeito.</p>
-        <p className="mt-1 text-xs">© {new Date().getFullYear()} BioWeb. Valores de planos ilustrativos.</p>
+        <p className="mt-1 text-xs">© {new Date().getFullYear()} Horzone</p>
       </footer>
     </main>
   );
