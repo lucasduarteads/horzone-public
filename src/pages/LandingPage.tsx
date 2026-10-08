@@ -617,6 +617,30 @@ export default function LandingPage() {
               )}
               {isSubmitting ? "Enviando..." : "Enviar interesse"}
             </button>
+            <div className="mt-3 flex min-h-10 items-center justify-center">
+              {isSubmitting && (
+                <p
+                  role="status"
+                  className="inline-flex items-center gap-2 text-center text-sm text-slate-600"
+                >
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-5 w-5 shrink-0 animate-bounce text-indigo-600"
+                  >
+                    <path d="M12 19v3" />
+                    <path d="M12 15.5 8.5 19l-1.5-1.5L9 12l-5-4 1-2 7 2 7-2 1 2-5 4 2 5.5-1.5 1.5L12 15.5Z" />
+                    <path d="M12 2v2" />
+                  </svg>
+                  <span>A conectar ao servidor e a enviar mensagem...</span>
+                </p>
+              )}
+            </div>
             {formFeedback && (
               <p
                 role={formFeedback.type === "error" ? "alert" : "status"}
