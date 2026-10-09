@@ -543,10 +543,19 @@ export default function LandingPage() {
             <div className="landing-benefits-visual relative mx-auto max-w-2xl">
               <div aria-hidden="true" className="absolute -inset-6 rounded-[2.5rem] bg-indigo-200/30 blur-3xl" />
               <img
-                src="/img/biowemockup.png"
+                src="/img/biowebmockup.png"
                 alt="Mockup da interface da BioWeb"
                 className="landing-benefits-image relative w-full rounded-[2rem] border border-indigo-100 bg-white p-2 shadow-[0_28px_80px_rgba(79,70,229,0.18)]"
               />
+              <div aria-hidden="true" className="landing-benefits-effects absolute inset-0">
+                <span className="landing-benefits-steam landing-benefits-steam-one" />
+                <span className="landing-benefits-steam landing-benefits-steam-two" />
+                <span className="landing-benefits-steam landing-benefits-steam-three" />
+                <span className="landing-benefits-notification-pulse" />
+                <span className="landing-benefits-success-pulse" />
+                <span className="landing-benefits-card-glint" />
+                <span className="landing-benefits-receipt-chip">✓ Pago</span>
+              </div>
               <div className="landing-benefits-badge absolute -bottom-4 left-6 rounded-full border border-white/80 bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-indigo-700 shadow-lg shadow-indigo-950/10">
                 Seu perfil em destaque
               </div>
